@@ -4,6 +4,7 @@ import { useCarreraStore } from "@/lib/store";
 import { calcularEstadisticas, calcularPromedio } from "@/lib/carrera-utils";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
+import { GraduationModal } from "@/components/graduation-modal";
 import {
   BookOpen,
   CheckCircle2,
@@ -13,11 +14,22 @@ import {
   FileCheck,
   TrendingUp,
 } from "lucide-react";
+import {useEffect, useRef, useState} from "react";
 
 export function Dashboard() {
   const progreso = useCarreraStore((s) => s.progreso);
   const stats = calcularEstadisticas(progreso);
   const promedio = calcularPromedio(progreso);
+  const [showModal, setShowModal] = useState(false);
+  const prevPendientes = useRef(stats.pendientes);
+
+  useEffect(() => {
+    if (prevPendientes.current > 0 && stats.pendientes === 0) {
+      setShowModal(true);
+    }
+
+    prevPendientes.current = stats.pendientes;
+  }, [stats.pendientes]);
 
   return (
     <div className="flex flex-col gap-4">
@@ -107,6 +119,10 @@ export function Dashboard() {
           bg="bg-indigo-50 dark:bg-indigo-950/40"
         />
       </div>
+      <GraduationModal
+          open={showModal}
+          onClose={() => setShowModal(false)}
+      />
     </div>
   );
 }
