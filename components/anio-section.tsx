@@ -21,6 +21,7 @@ import {
 import { useIsMobile } from "@/hooks/use-mobile";
 import { MateriaCard } from "./materia-card";
 import { ChevronDown } from "lucide-react";
+import {cn} from "@/lib/utils";
 
 interface AnioSectionProps {
   anioData: AnioData;
@@ -34,7 +35,7 @@ export function AnioSection({ anioData, filtro, onScrollToMateria }: AnioSection
   const isMobile = useIsMobile();
   const setAnioExpandido = useCarreraStore((s) => s.setAnioExpandido);
 
-  const isOpen = anioExpandido === null || anioExpandido === anioData.anio;
+  const isOpen = anioExpandido.includes(anioData.anio);
 
   const materiasFiltradas = useMemo(() => {
     return anioData.materias.filter((m) => {
@@ -62,14 +63,14 @@ export function AnioSection({ anioData, filtro, onScrollToMateria }: AnioSection
   if (materiasFiltradas.length === 0 && filtro !== "todas") return null;
 
   return (
-    <Collapsible
-      open={isOpen}
-      onOpenChange={(open) => setAnioExpandido(open ? anioData.anio : null)}
-    >
+      <Collapsible
+          open={isOpen}
+          onOpenChange={() => setAnioExpandido(anioData.anio)}
+      >
       <CollapsibleTrigger className="flex w-full items-center justify-between rounded-lg bg-card px-4 py-3 border transition-colors hover:bg-muted/50 cursor-pointer">
         <div className="flex items-center gap-3">
           <span className="text-base font-bold tabular-nums">
-            {anioData.anio}{"° Anio"}
+            {anioData.anio}{"° Año"}
           </span>
           <div className="flex items-center gap-1.5">
             {aprobadas > 0 && (
@@ -94,9 +95,10 @@ export function AnioSection({ anioData, filtro, onScrollToMateria }: AnioSection
           </div>
         </div>
         <ChevronDown
-          className={`size-5 text-muted-foreground transition-transform duration-200 ${
-            isOpen ? "rotate-180" : ""
-          }`}
+            className={cn(
+                "size-5 text-muted-foreground transition-transform duration-200",
+                isOpen && "rotate-180"
+            )}
         />
       </CollapsibleTrigger>
 
