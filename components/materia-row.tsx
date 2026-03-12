@@ -76,6 +76,8 @@ export function MateriaRow({ materia, onScrollToMateria }: MateriaRowProps) {
       ? "bg-emerald-50/60 dark:bg-emerald-950/30"
       : estado === "REGULAR"
       ? "bg-amber-50/60 dark:bg-amber-950/30"
+      : estado === "EN_CURSO"
+      ? "bg-sky-50/60 dark:bg-sky-950/30"
       : !habilitada
       ? "opacity-45"
       : "";
@@ -143,6 +145,8 @@ export function MateriaRow({ materia, onScrollToMateria }: MateriaRowProps) {
                             ? "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/50 dark:text-emerald-400"
                             : corrEstado === "REGULAR"
                             ? "bg-amber-100 text-amber-700 dark:bg-amber-900/50 dark:text-amber-400"
+                            : corrEstado === "EN_CURSO"
+                            ? "bg-sky-100 text-sky-700 dark:bg-sky-900/50 dark:text-sky-400"
                             : isFaltante
                             ? "bg-destructive/10 text-destructive"
                             : "bg-muted text-muted-foreground"
@@ -151,6 +155,8 @@ export function MateriaRow({ materia, onScrollToMateria }: MateriaRowProps) {
                       {corrEstado === "APROBADA" ? (
                         <CheckCircle2 className="size-3" />
                       ) : corrEstado === "REGULAR" ? (
+                        <Clock className="size-3" />
+                      ) : corrEstado === "EN_CURSO" ? (
                         <Clock className="size-3" />
                       ) : (
                         <Lock className="size-3" />
@@ -165,6 +171,8 @@ export function MateriaRow({ materia, onScrollToMateria }: MateriaRowProps) {
                         ? "Aprobada"
                         : corrEstado === "REGULAR"
                         ? "Regular"
+                        : corrEstado === "EN_CURSO"
+                        ? "En curso"
                         : "No cursada"}
                     </p>
                   </TooltipContent>
@@ -189,6 +197,7 @@ export function MateriaRow({ materia, onScrollToMateria }: MateriaRowProps) {
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="NO_CURSADA">No cursada</SelectItem>
+            <SelectItem value="EN_CURSO">En curso</SelectItem>
             <SelectItem value="REGULAR">Regular</SelectItem>
             <SelectItem value="APROBADA">Aprobada</SelectItem>
           </SelectContent>
@@ -197,7 +206,7 @@ export function MateriaRow({ materia, onScrollToMateria }: MateriaRowProps) {
 
       {/* Nota */}
       <TableCell>
-        {estado !== "NO_CURSADA" ? (
+        {estado === "REGULAR" || estado === "APROBADA" ? (
           <Input
             type="number"
             placeholder="-"

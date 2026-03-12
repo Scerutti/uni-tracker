@@ -89,6 +89,11 @@ export function MateriaCard({ materia, onScrollToMateria }: MateriaCardProps) {
                         Regular
                     </Badge>
                 )}
+                {estado === "EN_CURSO" && (
+                    <Badge className="bg-sky-100 text-sky-700">
+                        En curso
+                    </Badge>
+                )}
             </div>
 
             {/* Correlativas */}
@@ -108,16 +113,20 @@ export function MateriaCard({ materia, onScrollToMateria }: MateriaCardProps) {
                                         ? "bg-emerald-100 text-emerald-700"
                                         : corrEstado === "REGULAR"
                                             ? "bg-amber-100 text-amber-700"
-                                            : isFaltante
-                                                ? "bg-destructive/10 text-destructive"
-                                                : "bg-muted text-muted-foreground"
+                                            : corrEstado === "EN_CURSO" 
+                                                ? "bg-sky-100 text-sky-700"
+                                                : isFaltante
+                                                    ? "bg-destructive/10 text-destructive"
+                                                    : "bg-muted text-muted-foreground"
                                 }`}
                             >
                                 {corrEstado === "APROBADA" ? (
                                     <CheckCircle2 className="size-3" />
                                 ) : corrEstado === "REGULAR" ? (
                                     <Clock className="size-3" />
-                                ) : (
+                                ) : corrEstado === "EN_CURSO" ?
+                                    <Clock className="size-3" />
+                                  : (
                                     <Lock className="size-3" />
                                 )}
                                 {cod.slice(-3)}
@@ -139,12 +148,13 @@ export function MateriaCard({ materia, onScrollToMateria }: MateriaCardProps) {
                     </SelectTrigger>
                     <SelectContent>
                         <SelectItem value="NO_CURSADA">No cursada</SelectItem>
+                        <SelectItem value="EN_CURSO">En curso</SelectItem>
                         <SelectItem value="REGULAR">Regular</SelectItem>
                         <SelectItem value="APROBADA">Aprobada</SelectItem>
                     </SelectContent>
                 </Select>
 
-                {estado !== "NO_CURSADA" && (
+                {(estado === "REGULAR" || estado === "APROBADA") && (
                     <Input
                         type="number"
                         min={0}

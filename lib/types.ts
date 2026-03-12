@@ -1,6 +1,6 @@
 export type TipoMateria = "Anual" | "Cuatrim C1" | "Cuatrim C2";
 
-export type EstadoMateria = "NO_CURSADA" | "REGULAR" | "APROBADA";
+export type EstadoMateria = "NO_CURSADA" | "EN_CURSO" | "REGULAR" | "APROBADA";
 
 export interface Materia {
   codigo: string;

@@ -31,7 +31,7 @@ export const useCarreraStore = create<CarreraState>()(
                         [codigo]: {
                             ...state.progreso[codigo],
                             estado,
-                            nota: estado === "NO_CURSADA" ? null : state.progreso[codigo]?.nota ?? null,
+                            nota: estado === "NO_CURSADA" || estado === "EN_CURSO" ? null : state.progreso[codigo]?.nota ?? null,
                         },
                     },
                 })),

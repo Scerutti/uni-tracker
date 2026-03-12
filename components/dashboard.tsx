@@ -13,6 +13,7 @@ import {
   Target,
   FileCheck,
   TrendingUp,
+  PlayCircle,
 } from "lucide-react";
 import {useEffect, useRef, useState} from "react";
 
@@ -20,6 +21,7 @@ export function Dashboard() {
   const progreso = useCarreraStore((s) => s.progreso);
   const stats = calcularEstadisticas(progreso);
   const promedio = calcularPromedio(progreso);
+
   const [showModal, setShowModal] = useState(false);
   const prevPendientes = useRef(stats.pendientes);
 
@@ -82,7 +84,7 @@ export function Dashboard() {
       </div>
 
       {/* Stats grid */}
-      <div className="grid grid-cols-2 gap-3 lg:grid-cols-5">
+      <div className="grid grid-cols-2 gap-3 lg:grid-cols-6">
         <StatCard
           icon={<CheckCircle2 className="size-4" />}
           label="Aprobadas"
@@ -96,6 +98,13 @@ export function Dashboard() {
           value={stats.regulares}
           color="text-amber-600 dark:text-amber-400"
           bg="bg-amber-50 dark:bg-amber-950/40"
+        />
+        <StatCard
+          icon={<PlayCircle className="size-4" />}
+          label="En curso"
+          value={stats.enCurso}
+          color="text-blue-600 dark:text-blue-400"
+          bg="bg-blue-50 dark:bg-blue-950/40"
         />
         <StatCard
           icon={<BookOpen className="size-4" />}
