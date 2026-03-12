@@ -41,7 +41,7 @@ export function estaHabilitadaParaCursar(
 
 /**
  * Verifica si una materia está habilitada para rendir final.
- * Regla general: todas las correlativas deben estar APROBADA.
+ * Regla general: todas las correlativas deben estar en estado APROBADA.
  * Reglas especiales para 340321 y 340533.
  */
 export function estaHabilitadaParaRendir(
@@ -135,11 +135,13 @@ export function calcularEstadisticas(progreso: ProgresoMap) {
 
   let aprobadas = 0;
   let regulares = 0;
+  let enCurso = 0;
 
   for (const m of todas) {
     const estado = progreso[m.codigo]?.estado ?? "NO_CURSADA";
     if (estado === "APROBADA") aprobadas++;
     else if (estado === "REGULAR") regulares++;
+    else if (estado === "EN_CURSO") enCurso++;
   }
 
   const habilitadasCursar = getMateriasHabilitadasParaCursar(progreso);
@@ -150,7 +152,8 @@ export function calcularEstadisticas(progreso: ProgresoMap) {
     total,
     aprobadas,
     regulares,
-    pendientes: total - aprobadas - regulares,
+    enCurso,
+    pendientes: total - aprobadas - regulares - enCurso,
     porcentaje,
     habilitadasCursar: habilitadasCursar.length,
     habilitadasRendir: habilitadasRendir.length,

@@ -26,7 +26,7 @@ import {
 import { Download, Upload, RotateCcw } from "lucide-react";
 import { toast } from "sonner";
 
-const VALID_ESTADOS: EstadoMateria[] = ["NO_CURSADA", "REGULAR", "APROBADA"];
+const VALID_ESTADOS: EstadoMateria[] = ["NO_CURSADA", "EN_CURSO", "REGULAR", "APROBADA"];
 const codigosValidos = new Set(getAllMaterias().map((m) => m.codigo));
 
 /**

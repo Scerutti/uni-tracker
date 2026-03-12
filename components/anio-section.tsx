@@ -20,6 +20,7 @@ import {
 } from "@/components/ui/collapsible";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { MateriaCard } from "./materia-card";
+// @ts-ignore
 import { ChevronDown } from "lucide-react";
 import {cn} from "@/lib/utils";
 
@@ -59,6 +60,9 @@ export function AnioSection({ anioData, filtro, onScrollToMateria }: AnioSection
   const regulares = anioData.materias.filter(
     (m) => getEstado(m.codigo, progreso) === "REGULAR"
   ).length;
+  const enCurso = anioData.materias.filter(
+    (m) => getEstado(m.codigo, progreso) === "EN_CURSO"
+  ).length;
 
   if (materiasFiltradas.length === 0 && filtro !== "todas") return null;
 
@@ -87,6 +91,14 @@ export function AnioSection({ anioData, filtro, onScrollToMateria }: AnioSection
                 className="bg-amber-100 text-amber-700 dark:bg-amber-900/50 dark:text-amber-400 text-xs"
               >
                 {regulares} reg.
+              </Badge>
+            )}
+            {enCurso > 0 && (
+              <Badge
+                variant="secondary"
+                className="bg-blue-100 text-blue-700 dark:bg-blue-900/50 dark:text-blue-400 text-xs"
+              >
+                {enCurso} en curso
               </Badge>
             )}
             <Badge variant="outline" className="text-xs">
