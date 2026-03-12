@@ -20,7 +20,6 @@ import {
 } from "@/components/ui/collapsible";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { MateriaCard } from "./materia-card";
-// @ts-ignore
 import { ChevronDown } from "lucide-react";
 import {cn} from "@/lib/utils";
 
