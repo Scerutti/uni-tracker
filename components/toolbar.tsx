@@ -2,8 +2,8 @@
 
 import { useCallback, useRef } from "react";
 import { useCarreraStore } from "@/lib/store";
-import { getAllMaterias } from "@/lib/plan-data";
-import type { EstadoMateria, FiltroActivo, ProgresoMap } from "@/lib/types";
+import { crearArchivoProgreso, leerArchivoProgreso } from "@/lib/progreso-io";
+import type { FiltroActivo } from "@/lib/types";
 import { Button } from "@/components/ui/button";
 import {
   Select,
@@ -26,61 +26,6 @@ import {
 import { Download, Upload, RotateCcw } from "lucide-react";
 import { toast } from "sonner";
 
-const VALID_ESTADOS: EstadoMateria[] = ["NO_CURSADA", "EN_CURSO", "REGULAR", "APROBADA"];
-const codigosValidos = new Set(getAllMaterias().map((m) => m.codigo));
-
-/**
- * Valida y sanitiza un JSON importado. Devuelve solo las entradas
- * con codigos que existen en el plan de estudios y estados validos.
- */
-function validarImport(data: unknown): ProgresoMap | null {
-  if (typeof data !== "object" || data === null || Array.isArray(data)) {
-    return null;
-  }
-
-  const resultado: ProgresoMap = {};
-  let entradas = 0;
-  let descartadas = 0;
-
-  for (const [codigo, valor] of Object.entries(data as Record<string, unknown>)) {
-    if (!codigosValidos.has(codigo)) {
-      descartadas++;
-      continue;
-    }
-
-    if (typeof valor !== "object" || valor === null) {
-      descartadas++;
-      continue;
-    }
-
-    const entry = valor as Record<string, unknown>;
-    const estado = entry.estado;
-
-    if (typeof estado !== "string" || !VALID_ESTADOS.includes(estado as EstadoMateria)) {
-      descartadas++;
-      continue;
-    }
-
-    let nota: number | null = null;
-    if (entry.nota !== null && entry.nota !== undefined) {
-      const num = Number(entry.nota);
-      if (!isNaN(num) && num >= 0 && num <= 10) {
-        nota = num;
-      }
-    }
-
-    resultado[codigo] = {
-      estado: estado as EstadoMateria,
-      nota,
-    };
-    entradas++;
-  }
-
-  if (entradas === 0 && descartadas > 0) return null;
-
-  return resultado;
-}
-
 export function Toolbar() {
   const filtro = useCarreraStore((s) => s.filtro);
   const setFiltro = useCarreraStore((s) => s.setFiltro);
@@ -90,7 +35,7 @@ export function Toolbar() {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleExport = useCallback(() => {
-    const json = JSON.stringify(progreso, null, 2);
+    const json = JSON.stringify(crearArchivoProgreso(progreso), null, 2);
     const blob = new Blob([json], { type: "application/json" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
@@ -114,28 +59,25 @@ export function Toolbar() {
       reader.onload = (ev) => {
         try {
           const raw = JSON.parse(ev.target?.result as string);
-          const validado = validarImport(raw);
+          const resultado = leerArchivoProgreso(raw);
 
-          if (!validado) {
-            toast.error("Error al importar", {
-              description:
-                "El archivo no tiene un formato valido. Asegurate de usar un JSON exportado por esta aplicacion.",
-            });
+          if (!resultado.ok) {
+            toast.error("Error al importar", { description: resultado.error });
             return;
           }
 
-          importarProgreso(validado);
+          importarProgreso(resultado.progreso);
 
-          const count = Object.values(validado).filter(
+          const count = Object.values(resultado.progreso).filter(
             (v) => v.estado !== "NO_CURSADA"
           ).length;
           toast.success("Progreso importado", {
-            description: `Se cargaron ${count} materia${count !== 1 ? "s" : ""} con avance. La UI se actualizo automaticamente.`,
+            description: `Se cargaron ${count} materia${count !== 1 ? "s" : ""} con avance.`,
           });
         } catch {
           toast.error("Error al importar", {
             description:
-              "No se pudo leer el archivo. Verifica que sea un JSON valido.",
+              "No se pudo leer el archivo. Verificá que sea un JSON válido.",
           });
         }
       };
@@ -212,7 +154,7 @@ export function Toolbar() {
             <AlertDialogHeader>
               <AlertDialogTitle>Reiniciar progreso</AlertDialogTitle>
               <AlertDialogDescription>
-                Esto eliminara todo tu progreso guardado. Esta accion no se
+                Esto eliminará todo tu progreso guardado. Esta acción no se
                 puede deshacer. Te recomendamos exportar tu progreso antes.
               </AlertDialogDescription>
             </AlertDialogHeader>

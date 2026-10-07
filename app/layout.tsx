@@ -18,8 +18,7 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: 'Mi Carrera - Seguimiento de Plan de Estudios',
-  description: 'Aplicacion de seguimiento de carrera universitaria. Visualiza tu avance, materias habilitadas y correlativas.',
-  generator: 'v0.app',
+  description: 'Aplicación de seguimiento de carrera universitaria. Visualizá tu avance, materias habilitadas y correlativas.',
   icons: {
     icon: [
       {

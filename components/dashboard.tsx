@@ -15,23 +15,15 @@ import {
   TrendingUp,
   PlayCircle,
 } from "lucide-react";
-import {useEffect, useRef, useState} from "react";
+
+const formatoHoras = new Intl.NumberFormat("es-AR");
 
 export function Dashboard() {
   const progreso = useCarreraStore((s) => s.progreso);
+  const celebracion = useCarreraStore((s) => s.celebracion);
+  const cerrarCelebracion = useCarreraStore((s) => s.cerrarCelebracion);
   const stats = calcularEstadisticas(progreso);
   const promedio = calcularPromedio(progreso);
-
-  const [showModal, setShowModal] = useState(false);
-  const prevPendientes = useRef(stats.pendientes);
-
-  useEffect(() => {
-    if (prevPendientes.current > 0 && stats.pendientes === 0) {
-      setShowModal(true);
-    }
-
-    prevPendientes.current = stats.pendientes;
-  }, [stats.pendientes]);
 
   return (
     <div className="flex flex-col gap-4">
@@ -54,6 +46,10 @@ export function Dashboard() {
               </span>
             </div>
             <Progress value={stats.porcentaje} className="h-3" />
+            <span className="text-xs text-muted-foreground tabular-nums">
+              {formatoHoras.format(stats.horasAprobadas)} de{" "}
+              {formatoHoras.format(stats.horasTotales)} hs aprobadas ({stats.porcentajeHoras}%)
+            </span>
           </CardContent>
         </Card>
 
@@ -71,12 +67,12 @@ export function Dashboard() {
                   {promedio.toFixed(2)}
                 </span>
                 <span className="text-sm text-muted-foreground">
-                  sobre notas cargadas
+                  de finales aprobados
                 </span>
               </>
             ) : (
               <span className="text-sm text-muted-foreground pt-2">
-                Carga notas para calcular el promedio
+                Cargá las notas de tus finales para calcular el promedio
               </span>
             )}
           </CardContent>
@@ -103,8 +99,8 @@ export function Dashboard() {
           icon={<PlayCircle className="size-4" />}
           label="En curso"
           value={stats.enCurso}
-          color="text-blue-600 dark:text-blue-400"
-          bg="bg-blue-50 dark:bg-blue-950/40"
+          color="text-sky-600 dark:text-sky-400"
+          bg="bg-sky-50 dark:bg-sky-950/40"
         />
         <StatCard
           icon={<BookOpen className="size-4" />}
@@ -117,8 +113,8 @@ export function Dashboard() {
           icon={<Target className="size-4" />}
           label="Habilitadas cursar"
           value={stats.habilitadasCursar}
-          color="text-sky-600 dark:text-sky-400"
-          bg="bg-sky-50 dark:bg-sky-950/40"
+          color="text-teal-600 dark:text-teal-400"
+          bg="bg-teal-50 dark:bg-teal-950/40"
         />
         <StatCard
           icon={<FileCheck className="size-4" />}
@@ -128,10 +124,7 @@ export function Dashboard() {
           bg="bg-indigo-50 dark:bg-indigo-950/40"
         />
       </div>
-      <GraduationModal
-          open={showModal}
-          onClose={() => setShowModal(false)}
-      />
+      <GraduationModal frase={celebracion} onClose={cerrarCelebracion} />
     </div>
   );
 }

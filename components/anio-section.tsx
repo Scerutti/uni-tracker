@@ -3,7 +3,8 @@
 import { useMemo } from "react";
 import { useCarreraStore } from "@/lib/store";
 import { getEstado, estaHabilitadaParaCursar } from "@/lib/carrera-utils";
-import type { AnioData, FiltroActivo } from "@/lib/types";
+import type { AnioData, EstadoMateria, FiltroActivo } from "@/lib/types";
+import { ESTADO_CONFIG } from "@/lib/estado-config";
 import { MateriaRow } from "./materia-row";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -53,15 +54,11 @@ export function AnioSection({ anioData, filtro, onScrollToMateria }: AnioSection
     });
   }, [anioData.materias, filtro, progreso]);
 
-  const aprobadas = anioData.materias.filter(
-    (m) => getEstado(m.codigo, progreso) === "APROBADA"
-  ).length;
-  const regulares = anioData.materias.filter(
-    (m) => getEstado(m.codigo, progreso) === "REGULAR"
-  ).length;
-  const enCurso = anioData.materias.filter(
-    (m) => getEstado(m.codigo, progreso) === "EN_CURSO"
-  ).length;
+  const contar = (estado: EstadoMateria) =>
+    anioData.materias.filter((m) => getEstado(m.codigo, progreso) === estado).length;
+  const aprobadas = contar("APROBADA");
+  const regulares = contar("REGULAR");
+  const enCurso = contar("EN_CURSO");
 
   if (materiasFiltradas.length === 0 && filtro !== "todas") return null;
 
@@ -79,7 +76,7 @@ export function AnioSection({ anioData, filtro, onScrollToMateria }: AnioSection
             {aprobadas > 0 && (
               <Badge
                 variant="secondary"
-                className="bg-emerald-100 text-emerald-700 dark:bg-emerald-900/50 dark:text-emerald-400 text-xs"
+                className={cn(ESTADO_CONFIG.APROBADA.chip, "text-xs")}
               >
                 {aprobadas} apr.
               </Badge>
@@ -87,7 +84,7 @@ export function AnioSection({ anioData, filtro, onScrollToMateria }: AnioSection
             {regulares > 0 && (
               <Badge
                 variant="secondary"
-                className="bg-amber-100 text-amber-700 dark:bg-amber-900/50 dark:text-amber-400 text-xs"
+                className={cn(ESTADO_CONFIG.REGULAR.chip, "text-xs")}
               >
                 {regulares} reg.
               </Badge>
@@ -95,7 +92,7 @@ export function AnioSection({ anioData, filtro, onScrollToMateria }: AnioSection
             {enCurso > 0 && (
               <Badge
                 variant="secondary"
-                className="bg-blue-100 text-blue-700 dark:bg-blue-900/50 dark:text-blue-400 text-xs"
+                className={cn(ESTADO_CONFIG.EN_CURSO.chip, "text-xs")}
               >
                 {enCurso} en curso
               </Badge>

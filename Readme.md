@@ -28,6 +28,7 @@ Aplicación web para **llevar el seguimiento del plan de estudios** de una carre
 Con **npm**:
 ```bash
 npm install
+npm run dev
 ```
 
 Luego abrí: http://localhost:3000
@@ -37,7 +38,18 @@ Luego abrí: http://localhost:3000
 - `dev`: levanta el entorno de desarrollo
 - `build`: compila para producción
 - `start`: ejecuta el build en modo producción
-- `lint`: corre el linter
+- `lint`: corre el linter (ESLint)
+- `typecheck`: verifica los tipos de TypeScript
+
+## Datos
+
+El progreso se guarda en el `localStorage` del navegador. Para pasarlo a otro
+navegador o dispositivo, usá **Exportar JSON** e **Importar JSON**.
+
+El plan de estudios y sus correlatividades están en `lib/plan-data.ts`. Una
+correlativa puede ser el código de una materia o un año completo (`{ anio: 2 }`),
+y una materia puede tener correlativas distintas para rendir el final
+(`correlativasRendir`).
 
 ## Contribuir
 

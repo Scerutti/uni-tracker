@@ -1,26 +1,18 @@
 "use client";
 
-import { useCallback } from "react";
-import { useCarreraStore } from "@/lib/store";
-import {
-    getEstado,
-    getNota,
-    getCorrelativasFaltantes,
-    puedeInteractuar,
-} from "@/lib/carrera-utils";
-import { getMateriaByCode } from "@/lib/plan-data";
-import type { EstadoMateria, Materia } from "@/lib/types";
+import { TriangleAlert } from "lucide-react";
+import { useMateria } from "@/hooks/use-materia";
+import { ESTADO_CONFIG, TIPO_LABEL } from "@/lib/estado-config";
+import type { Materia } from "@/lib/types";
+import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
-import { Input } from "@/components/ui/input";
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from "@/components/ui/select";
 import { Card } from "@/components/ui/card";
-import { CheckCircle2, Clock, Lock } from "lucide-react";
+import {
+    Correlativas,
+    EstadoSelect,
+    NotaInput,
+    nombresDeMaterias,
+} from "@/components/materia-shared";
 
 interface MateriaCardProps {
     materia: Materia;
@@ -28,46 +20,18 @@ interface MateriaCardProps {
 }
 
 export function MateriaCard({ materia, onScrollToMateria }: MateriaCardProps) {
-    const progreso = useCarreraStore((s) => s.progreso);
-    const setEstado = useCarreraStore((s) => s.setEstado);
-    const setNota = useCarreraStore((s) => s.setNota);
-
-    const estado = getEstado(materia.codigo, progreso);
-    const nota = getNota(materia.codigo, progreso);
-    const habilitada = puedeInteractuar(materia, progreso);
-    const faltantes = getCorrelativasFaltantes(materia, progreso);
-
-    const handleEstadoChange = useCallback(
-        (value: string) => {
-            setEstado(materia.codigo, value as EstadoMateria);
-        },
-        [materia.codigo, setEstado]
-    );
-
-    const handleNotaChange = useCallback(
-        (e: React.ChangeEvent<HTMLInputElement>) => {
-            const val = e.target.value;
-            if (val === "") {
-                setNota(materia.codigo, null);
-            } else {
-                const num = parseFloat(val);
-                if (!isNaN(num) && num >= 0 && num <= 10) {
-                    setNota(materia.codigo, num);
-                }
-            }
-        },
-        [materia.codigo, setNota]
-    );
-
-    const tipoLabel =
-        materia.tipo === "Anual"
-            ? "Anual"
-            : materia.tipo === "Cuatrim C1"
-                ? "C1"
-                : "C2";
+    const { progreso, estado, nota, habilitada, incumplidas, handleEstadoChange, handleNotaChange } =
+        useMateria(materia);
+    const config = ESTADO_CONFIG[estado];
 
     return (
-        <Card className="p-4 space-y-3">
+        <Card
+            id={`materia-${materia.codigo}`}
+            className={cn(
+                "p-4 gap-3 transition-all duration-200",
+                estado === "NO_CURSADA" && !habilitada ? "opacity-45" : config.fila
+            )}
+        >
             {/* Header */}
             <div className="flex justify-between items-start gap-3">
                 <div>
@@ -75,94 +39,50 @@ export function MateriaCard({ materia, onScrollToMateria }: MateriaCardProps) {
                         {materia.nombre}
                     </p>
                     <p className="text-xs text-muted-foreground">
-                        {materia.codigo} • {tipoLabel} • {materia.cargaHoraria} hs
+                        {materia.codigo} • {TIPO_LABEL[materia.tipo]} • {materia.cargaHoraria} hs
                     </p>
+                    {materia.aclaracion && (
+                        <p className="text-xs text-muted-foreground italic">
+                            {materia.aclaracion}
+                        </p>
+                    )}
                 </div>
 
-                {estado === "APROBADA" && (
-                    <Badge className="bg-emerald-100 text-emerald-700">
-                        Aprobada
-                    </Badge>
-                )}
-                {estado === "REGULAR" && (
-                    <Badge className="bg-amber-100 text-amber-700">
-                        Regular
-                    </Badge>
-                )}
-                {estado === "EN_CURSO" && (
-                    <Badge className="bg-sky-100 text-sky-700">
-                        En curso
+                {estado !== "NO_CURSADA" && (
+                    <Badge variant="secondary" className={cn("border-transparent", config.chip)}>
+                        {config.label}
                     </Badge>
                 )}
             </div>
 
-            {/* Correlativas */}
-            {materia.correlativas.length > 0 && (
-                <div className="flex flex-wrap gap-2">
-                    {materia.correlativas.map((cod) => {
-                        const corrEstado = getEstado(cod, progreso);
-                        const isFaltante = faltantes.includes(cod);
-
-                        return (
-                            <button
-                                key={cod}
-                                onClick={() => onScrollToMateria?.(cod)}
-                                className={`flex items-center gap-1 text-xs px-2 py-1 rounded
-                  ${
-                                    corrEstado === "APROBADA"
-                                        ? "bg-emerald-100 text-emerald-700"
-                                        : corrEstado === "REGULAR"
-                                            ? "bg-amber-100 text-amber-700"
-                                            : corrEstado === "EN_CURSO" 
-                                                ? "bg-sky-100 text-sky-700"
-                                                : isFaltante
-                                                    ? "bg-destructive/10 text-destructive"
-                                                    : "bg-muted text-muted-foreground"
-                                }`}
-                            >
-                                {corrEstado === "APROBADA" ? (
-                                    <CheckCircle2 className="size-3" />
-                                ) : corrEstado === "REGULAR" ? (
-                                    <Clock className="size-3" />
-                                ) : corrEstado === "EN_CURSO" ?
-                                    <Clock className="size-3" />
-                                  : (
-                                    <Lock className="size-3" />
-                                )}
-                                {cod.slice(-3)}
-                            </button>
-                        );
-                    })}
-                </div>
+            {incumplidas.length > 0 && (
+                <p className="flex items-start gap-1.5 text-xs text-amber-700 dark:text-amber-400">
+                    <TriangleAlert className="size-3.5 shrink-0 mt-px" />
+                    <span>Correlativas no cumplidas: {nombresDeMaterias(incumplidas)}</span>
+                </p>
             )}
+
+            <Correlativas
+                materia={materia}
+                progreso={progreso}
+                onScrollToMateria={onScrollToMateria}
+            />
 
             {/* Estado + Nota */}
             <div className="flex gap-2 items-center">
-                <Select
+                <EstadoSelect
                     value={estado}
                     onValueChange={handleEstadoChange}
                     disabled={!habilitada}
-                >
-                    <SelectTrigger className="h-9 text-xs">
-                        <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                        <SelectItem value="NO_CURSADA">No cursada</SelectItem>
-                        <SelectItem value="EN_CURSO">En curso</SelectItem>
-                        <SelectItem value="REGULAR">Regular</SelectItem>
-                        <SelectItem value="APROBADA">Aprobada</SelectItem>
-                    </SelectContent>
-                </Select>
+                    className="flex-1"
+                />
 
                 {(estado === "REGULAR" || estado === "APROBADA") && (
-                    <Input
-                        type="number"
-                        min={0}
-                        max={10}
-                        step={1}
-                        value={nota ?? ""}
+                    <NotaInput
+                        estado={estado}
+                        nota={nota}
                         onChange={handleNotaChange}
-                        className="h-9 w-20 text-xs text-center"
+                        className="h-9 w-20"
                     />
                 )}
             </div>

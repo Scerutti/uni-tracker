@@ -1,61 +1,36 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
+import { useEffect } from "react";
+import { Dialog, DialogContent, DialogDescription, DialogTitle } from "@/components/ui/dialog";
 import { GraduationCap } from "lucide-react";
 import confetti from "canvas-confetti";
 
-const FRASES = [
-    "No fue suerte. Fue constancia.",
-    "Terminaste lo que empezaste.",
-    "Disciplina > motivación.",
-    "El esfuerzo sostenido construye resultados.",
-    "La meta no era el título. Era en quién te convertiste.",
-];
-
-function getRandomFrase(prev?: string) {
-    let nueva;
-
-    do {
-        nueva = FRASES[Math.floor(Math.random() * FRASES.length)];
-    } while (FRASES.length > 1 && nueva === prev);
-
-    return nueva;
-}
-
+/**
+ * Modal de egreso. Está abierto mientras haya una frase; la elige el store
+ * en el momento en que se aprueba la última materia.
+ */
 export function GraduationModal({
-                                    open,
-                                    onClose,
-                                }: {
-    open: boolean;
+    frase,
+    onClose,
+}: {
+    frase: string | null;
     onClose: () => void;
 }) {
-    const [frase, setFrase] = useState("");
-    const [hasFired, setHasFired] = useState(false);
+    const open = frase !== null;
 
-    // 🎉 Genera nueva frase cada vez que se abre
+    // 🎊 Dispara confetti cada vez que se abre
     useEffect(() => {
         if (open) {
-            setFrase((prev) => getRandomFrase(prev));
-            setHasFired(false); // permite confetti nuevamente si vuelve a abrir
-        }
-    }, [open]);
-
-    // 🎊 Dispara confetti cuando se abre
-    useEffect(() => {
-        if (open && !hasFired) {
-            confetti({
+            void confetti({
                 particleCount: 120,
                 spread: 70,
                 origin: { y: 0.6 },
             });
-
-            setHasFired(true);
         }
-    }, [open, hasFired]);
+    }, [open]);
 
     return (
-        <Dialog open={open} onOpenChange={onClose}>
+        <Dialog open={open} onOpenChange={(abierto) => !abierto && onClose()}>
             <DialogContent className="text-center py-10">
                 <DialogTitle className="text-2xl font-bold">
                     Felicitaciones, Licenciado 🎓
@@ -66,9 +41,9 @@ export function GraduationModal({
                         <GraduationCap className="size-10 text-emerald-600 dark:text-emerald-400" />
                     </div>
 
-                    <p className="text-muted-foreground max-w-md">
+                    <DialogDescription className="max-w-md">
                         {frase}
-                    </p>
+                    </DialogDescription>
                 </div>
             </DialogContent>
         </Dialog>

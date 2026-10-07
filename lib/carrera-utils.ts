@@ -1,129 +1,129 @@
-import type { EstadoMateria, Materia, ProgresoMap } from "./types";
+import type { EstadoMateria, Materia, ProgresoMap, Requisito } from "./types";
 import { getAllMaterias, getMateriasDeAnio } from "./plan-data";
 
+/** Nota mínima para aprobar un final. */
+export const NOTA_MINIMA_APROBACION = 4;
+
+const cumpleParaCursar = (estado: EstadoMateria) =>
+  estado === "REGULAR" || estado === "APROBADA";
+
+const cumpleParaRendir = (estado: EstadoMateria) => estado === "APROBADA";
+
 /**
- * Verifica si una materia está habilitada para cursar.
- * Regla general: todas las correlativas deben estar REGULAR o APROBADA.
- * Reglas especiales para 340321 y 340533.
+ * Obtiene el estado de una materia con valor por defecto.
  */
-export function estaHabilitadaParaCursar(
-  materia: Materia,
-  progreso: ProgresoMap
-): boolean {
-  const estadoActual = progreso[materia.codigo]?.estado ?? "NO_CURSADA";
-  // Si ya está REGULAR o APROBADA, no necesita "habilitarse"
-  if (estadoActual !== "NO_CURSADA") return false;
+export function getEstado(codigo: string, progreso: ProgresoMap): EstadoMateria {
+  return progreso[codigo]?.estado ?? "NO_CURSADA";
+}
 
-  // Regla especial: 340321 - Taller de Integración
-  if (materia.codigo === "340321") {
-    const materias2do = getMateriasDeAnio(2);
-    return materias2do.every((m) => {
-      const estado = progreso[m.codigo]?.estado ?? "NO_CURSADA";
-      return estado === "REGULAR" || estado === "APROBADA";
-    });
-  }
-
-  // Regla especial: 340533 - Tesina de Grado
-  if (materia.codigo === "340533") {
-    const requeridas = ["340423", "340424", "340425"];
-    return requeridas.every((codigo) => {
-      const estado = progreso[codigo]?.estado ?? "NO_CURSADA";
-      return estado === "REGULAR" || estado === "APROBADA";
-    });
-  }
-
-  // Regla general
-  return materia.correlativas.every((codigo) => {
-    const estado = progreso[codigo]?.estado ?? "NO_CURSADA";
-    return estado === "REGULAR" || estado === "APROBADA";
-  });
+export function getNota(codigo: string, progreso: ProgresoMap): number | null {
+  return progreso[codigo]?.nota ?? null;
 }
 
 /**
- * Verifica si una materia está habilitada para rendir final.
- * Regla general: todas las correlativas deben estar en estado APROBADA.
- * Reglas especiales para 340321 y 340533.
+ * Convierte requisitos (códigos o años completos) en una lista de códigos,
+ * excluyendo a la propia materia.
  */
-export function estaHabilitadaParaRendir(
-  materia: Materia,
-  progreso: ProgresoMap
-): boolean {
-  const estadoActual = progreso[materia.codigo]?.estado ?? "NO_CURSADA";
-  // Solo se puede rendir si está REGULAR
-  if (estadoActual !== "REGULAR") return false;
+function expandirRequisitos(materia: Materia, requisitos: Requisito[]): string[] {
+  const codigos = requisitos.flatMap((r) =>
+    typeof r === "string" ? [r] : getMateriasDeAnio(r.anio).map((m) => m.codigo)
+  );
+  return codigos.filter((c) => c !== materia.codigo);
+}
 
-  // Regla especial: 340321 - Taller de Integración
-  if (materia.codigo === "340321") {
-    const materias3ro = getMateriasDeAnio(3);
-    return materias3ro
-      .filter((m) => m.codigo !== "340321")
-      .every((m) => {
-        const estado = progreso[m.codigo]?.estado ?? "NO_CURSADA";
-        return estado === "APROBADA";
-      });
-  }
+export function getCodigosParaCursar(materia: Materia): string[] {
+  return expandirRequisitos(materia, materia.correlativas);
+}
 
-  // Regla especial: 340533 - Tesina de Grado
-  if (materia.codigo === "340533") {
-    const materias5to = getMateriasDeAnio(5);
-    return materias5to
-      .filter((m) => m.codigo !== "340533")
-      .every((m) => {
-        const estado = progreso[m.codigo]?.estado ?? "NO_CURSADA";
-        return estado === "APROBADA";
-      });
-  }
-
-  // Regla general
-  return materia.correlativas.every((codigo) => {
-    const estado = progreso[codigo]?.estado ?? "NO_CURSADA";
-    return estado === "APROBADA";
-  });
+export function getCodigosParaRendir(materia: Materia): string[] {
+  return expandirRequisitos(materia, materia.correlativasRendir ?? materia.correlativas);
 }
 
 /**
- * Obtiene todas las materias habilitadas para cursar.
+ * Un requisito está cumplido para cursar si todas sus materias están REGULAR o APROBADA.
  */
+export function requisitoCumplido(
+  materia: Materia,
+  requisito: Requisito,
+  progreso: ProgresoMap
+): boolean {
+  return expandirRequisitos(materia, [requisito]).every((c) =>
+    cumpleParaCursar(getEstado(c, progreso))
+  );
+}
+
+function cumpleCorrelativasCursar(materia: Materia, progreso: ProgresoMap): boolean {
+  return getCodigosParaCursar(materia).every((c) => cumpleParaCursar(getEstado(c, progreso)));
+}
+
+function cumpleCorrelativasRendir(materia: Materia, progreso: ProgresoMap): boolean {
+  return getCodigosParaRendir(materia).every((c) => cumpleParaRendir(getEstado(c, progreso)));
+}
+
+/**
+ * Una materia está habilitada para cursar si todavía no se cursó y
+ * sus correlativas están REGULAR o APROBADA.
+ */
+export function estaHabilitadaParaCursar(materia: Materia, progreso: ProgresoMap): boolean {
+  return (
+    getEstado(materia.codigo, progreso) === "NO_CURSADA" &&
+    cumpleCorrelativasCursar(materia, progreso)
+  );
+}
+
+/**
+ * Una materia está habilitada para rendir si está REGULAR y
+ * sus correlativas de final están APROBADA.
+ */
+export function estaHabilitadaParaRendir(materia: Materia, progreso: ProgresoMap): boolean {
+  return (
+    getEstado(materia.codigo, progreso) === "REGULAR" &&
+    cumpleCorrelativasRendir(materia, progreso)
+  );
+}
+
+/**
+ * Una materia se puede editar si ya tiene progreso o si cumple las correlativas para cursar.
+ */
+export function puedeInteractuar(materia: Materia, progreso: ProgresoMap): boolean {
+  return (
+    getEstado(materia.codigo, progreso) !== "NO_CURSADA" ||
+    cumpleCorrelativasCursar(materia, progreso)
+  );
+}
+
+/**
+ * Correlativas que no acompañan al estado actual de la materia, por ejemplo
+ * una materia APROBADA cuya correlativa se volvió a marcar como no cursada.
+ */
+export function getCorrelativasIncumplidas(materia: Materia, progreso: ProgresoMap): string[] {
+  const estado = getEstado(materia.codigo, progreso);
+  if (estado === "NO_CURSADA") return [];
+
+  const incumplidas = new Set(
+    getCodigosParaCursar(materia).filter((c) => !cumpleParaCursar(getEstado(c, progreso)))
+  );
+  if (estado === "APROBADA") {
+    for (const c of getCodigosParaRendir(materia)) {
+      if (!cumpleParaRendir(getEstado(c, progreso))) incumplidas.add(c);
+    }
+  }
+  return [...incumplidas];
+}
+
 export function getMateriasHabilitadasParaCursar(progreso: ProgresoMap): Materia[] {
   return getAllMaterias().filter((m) => estaHabilitadaParaCursar(m, progreso));
 }
 
-/**
- * Obtiene todas las materias habilitadas para rendir.
- */
 export function getMateriasHabilitadasParaRendir(progreso: ProgresoMap): Materia[] {
   return getAllMaterias().filter((m) => estaHabilitadaParaRendir(m, progreso));
 }
 
 /**
- * Obtiene las correlativas faltantes para una materia.
+ * Indica si todas las materias del plan están aprobadas.
  */
-export function getCorrelativasFaltantes(
-  materia: Materia,
-  progreso: ProgresoMap
-): string[] {
-  if (materia.codigo === "340321") {
-    const materias2do = getMateriasDeAnio(2);
-    return materias2do
-      .filter((m) => {
-        const estado = progreso[m.codigo]?.estado ?? "NO_CURSADA";
-        return estado === "NO_CURSADA";
-      })
-      .map((m) => m.codigo);
-  }
-
-  if (materia.codigo === "340533") {
-    const requeridas = ["340423", "340424", "340425"];
-    return requeridas.filter((codigo) => {
-      const estado = progreso[codigo]?.estado ?? "NO_CURSADA";
-      return estado === "NO_CURSADA";
-    });
-  }
-
-  return materia.correlativas.filter((codigo) => {
-    const estado = progreso[codigo]?.estado ?? "NO_CURSADA";
-    return estado === "NO_CURSADA";
-  });
+export function esEgresado(progreso: ProgresoMap): boolean {
+  return getAllMaterias().every((m) => getEstado(m.codigo, progreso) === "APROBADA");
 }
 
 /**
@@ -136,17 +136,21 @@ export function calcularEstadisticas(progreso: ProgresoMap) {
   let aprobadas = 0;
   let regulares = 0;
   let enCurso = 0;
+  let horasTotales = 0;
+  let horasAprobadas = 0;
 
   for (const m of todas) {
-    const estado = progreso[m.codigo]?.estado ?? "NO_CURSADA";
-    if (estado === "APROBADA") aprobadas++;
-    else if (estado === "REGULAR") regulares++;
+    const estado = getEstado(m.codigo, progreso);
+    horasTotales += m.cargaHoraria;
+    if (estado === "APROBADA") {
+      aprobadas++;
+      horasAprobadas += m.cargaHoraria;
+    } else if (estado === "REGULAR") regulares++;
     else if (estado === "EN_CURSO") enCurso++;
   }
 
-  const habilitadasCursar = getMateriasHabilitadasParaCursar(progreso);
-  const habilitadasRendir = getMateriasHabilitadasParaRendir(progreso);
   const porcentaje = total > 0 ? Math.round((aprobadas / total) * 100) : 0;
+  const porcentajeHoras = horasTotales > 0 ? Math.round((horasAprobadas / horasTotales) * 100) : 0;
 
   return {
     total,
@@ -155,18 +159,22 @@ export function calcularEstadisticas(progreso: ProgresoMap) {
     enCurso,
     pendientes: total - aprobadas - regulares - enCurso,
     porcentaje,
-    habilitadasCursar: habilitadasCursar.length,
-    habilitadasRendir: habilitadasRendir.length,
+    horasTotales,
+    horasAprobadas,
+    porcentajeHoras,
+    habilitadasCursar: getMateriasHabilitadasParaCursar(progreso).length,
+    habilitadasRendir: getMateriasHabilitadasParaRendir(progreso).length,
   };
 }
 
 /**
- * Calcula el promedio de notas (solo materias con nota cargada).
+ * Calcula el promedio de las notas de finales aprobados.
  */
 export function calcularPromedio(progreso: ProgresoMap): number | null {
   const notas: number[] = [];
-  for (const entry of Object.values(progreso)) {
-    if (entry.nota !== null && entry.nota !== undefined) {
+  for (const m of getAllMaterias()) {
+    const entry = progreso[m.codigo];
+    if (entry?.estado === "APROBADA" && entry.nota !== null) {
       notas.push(entry.nota);
     }
   }
@@ -176,55 +184,8 @@ export function calcularPromedio(progreso: ProgresoMap): number | null {
 }
 
 /**
- * Determina si una materia puede ser interactuada (cambiar estado/nota).
- * Es interactiva si:
- * - Ya tiene estado REGULAR o APROBADA (ya se marco algo)
- * - O cumple con todas las correlativas para cursar
+ * Indica si la nota cargada no es coherente con el estado (aprobada con nota menor a la mínima).
  */
-export function puedeInteractuar(
-  materia: Materia,
-  progreso: ProgresoMap
-): boolean {
-  const estadoActual = progreso[materia.codigo]?.estado ?? "NO_CURSADA";
-  // Si ya tiene progreso, siempre se puede editar
-  if (estadoActual !== "NO_CURSADA") return true;
-
-  // Si no tiene correlativas especiales, check reglas
-  // Regla especial: 340321 - Taller de Integracion
-  if (materia.codigo === "340321") {
-    const materias2do = getMateriasDeAnio(2);
-    return materias2do.every((m) => {
-      const estado = progreso[m.codigo]?.estado ?? "NO_CURSADA";
-      return estado === "REGULAR" || estado === "APROBADA";
-    });
-  }
-
-  // Regla especial: 340533 - Tesina de Grado
-  if (materia.codigo === "340533") {
-    const requeridas = ["340423", "340424", "340425"];
-    return requeridas.every((codigo) => {
-      const estado = progreso[codigo]?.estado ?? "NO_CURSADA";
-      return estado === "REGULAR" || estado === "APROBADA";
-    });
-  }
-
-  // Sin correlativas -> siempre habilitada
-  if (materia.correlativas.length === 0) return true;
-
-  // Regla general: todas las correlativas deben ser REGULAR o APROBADA
-  return materia.correlativas.every((codigo) => {
-    const estado = progreso[codigo]?.estado ?? "NO_CURSADA";
-    return estado === "REGULAR" || estado === "APROBADA";
-  });
-}
-
-/**
- * Obtiene el estado de una materia con valor por defecto.
- */
-export function getEstado(codigo: string, progreso: ProgresoMap): EstadoMateria {
-  return progreso[codigo]?.estado ?? "NO_CURSADA";
-}
-
-export function getNota(codigo: string, progreso: ProgresoMap): number | null {
-  return progreso[codigo]?.nota ?? null;
+export function notaInvalida(estado: EstadoMateria, nota: number | null): boolean {
+  return estado === "APROBADA" && nota !== null && nota < NOTA_MINIMA_APROBACION;
 }
