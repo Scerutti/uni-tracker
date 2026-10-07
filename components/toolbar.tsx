@@ -46,7 +46,10 @@ export function Toolbar() {
 
     const count = Object.keys(progreso).length;
     toast.success("Progreso exportado", {
-      description: `Se exportaron ${count} materia${count !== 1 ? "s" : ""} con progreso.`,
+      description:
+        count === 1
+          ? "Se exportó 1 materia con progreso."
+          : `Se exportaron ${count} materias con progreso.`,
     });
   }, [progreso]);
 
@@ -72,7 +75,10 @@ export function Toolbar() {
             (v) => v.estado !== "NO_CURSADA"
           ).length;
           toast.success("Progreso importado", {
-            description: `Se cargaron ${count} materia${count !== 1 ? "s" : ""} con avance.`,
+            description:
+              count === 1
+                ? "Se cargó 1 materia con avance."
+                : `Se cargaron ${count} materias con avance.`,
           });
         } catch {
           toast.error("Error al importar", {
