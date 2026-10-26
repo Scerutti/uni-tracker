@@ -4,15 +4,17 @@ Los cambios de cada versión de uni-tracker. La versión que se ve en el footer 
 
 El formato sigue [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/) y las versiones siguen [SemVer](https://semver.org/lang/es/).
 
-## [0.2.0] - sin publicar
+## [1.0.0] - sin publicar
 
 <!-- Al hacer el release a main, cambiar "sin publicar" por la fecha real. -->
+
+Primera versión estable: la app está en uso, soporta varias carreras y el progreso guardado tiene migraciones.
 
 ### Agregado
 
 - Soporte para varias carreras: cada una tiene su página (`/carrera/<id>`) y su progreso guardado por separado. La home las agrupa por universidad. (#13)
 - Validación de los planes de estudio y tests con Vitest. (#13)
-- Formulario de GitHub para pedir una carrera nueva, enlazado desde la home. (#13)
+- Pedir una carrera nueva desde la home o la 404: por mail (con los datos a completar) o con un issue en GitHub.
 - Página 404 propia. (#14)
 - Filtro "Habilitadas para rendir".
 - Las materias con correlativas distintas para rendir el final muestran las dos listas (Cursar / Rendir).
