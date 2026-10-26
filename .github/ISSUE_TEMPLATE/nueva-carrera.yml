@@ -1,0 +1,39 @@
+name: Nueva carrera
+description: Pedir que se agregue el plan de estudios de una carrera.
+title: "Nueva carrera: "
+labels: [carrera]
+body:
+  - type: input
+    id: universidad
+    attributes:
+      label: Universidad
+      placeholder: Universidad Autónoma de Entre Ríos
+    validations:
+      required: true
+  - type: input
+    id: carrera
+    attributes:
+      label: Carrera
+      placeholder: Licenciatura en ...
+    validations:
+      required: true
+  - type: input
+    id: plan
+    attributes:
+      label: Plan de estudios
+      description: Año o resolución del plan vigente.
+      placeholder: Plan 2023, Res. CS N° ...
+    validations:
+      required: true
+  - type: input
+    id: link
+    attributes:
+      label: Link al plan oficial
+      description: PDF o página de la universidad con materias y correlativas.
+    validations:
+      required: true
+  - type: textarea
+    id: reglas
+    attributes:
+      label: Reglas especiales
+      description: Nota mínima para aprobar, escala de notas, correlativas por año completo, optativas, títulos intermedios, etc.
