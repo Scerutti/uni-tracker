@@ -4,4 +4,4 @@ out/
 *.tsbuildinfo
 .env*.local
 .DS_Store
-.idea/
+next-env.d.ts
