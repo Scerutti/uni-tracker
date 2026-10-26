@@ -1,12 +1,10 @@
-import type { Carrera, EstadoMateria, ProgresoMap } from "./types";
+import { type Carrera, type EstadoMateria, type ProgresoMap, ESTADOS } from "./types";
 import { getCarrera } from "./carreras";
 import { esNotaValida, llevaNota } from "./carrera-utils";
 import { getMateriaByCode } from "./plan";
 
 const APP_ID = "uni-tracker";
 const FORMATO_VERSION = 1;
-
-const VALID_ESTADOS: EstadoMateria[] = ["NO_CURSADA", "EN_CURSO", "REGULAR", "APROBADA"];
 
 export interface ArchivoProgreso {
   app: typeof APP_ID;
@@ -39,7 +37,7 @@ export function sanitizarProgreso(carrera: Carrera, data: unknown): ProgresoMap 
     const entry = valor as Record<string, unknown>;
     const estado = entry.estado;
 
-    if (typeof estado !== "string" || !VALID_ESTADOS.includes(estado as EstadoMateria)) {
+    if (typeof estado !== "string" || !ESTADOS.includes(estado as EstadoMateria)) {
       descartadas++;
       continue;
     }
@@ -78,19 +76,14 @@ export function nombreArchivoProgreso(carrera: Carrera, fecha = new Date()): str
   return `progreso-${carrera.id}-${fecha.toISOString().slice(0, 10)}.json`;
 }
 
-export type ResultadoLectura =
-  | { ok: true; progreso: ProgresoMap }
-  | { ok: false; error: string };
+export type ResultadoLectura = { ok: true; progreso: ProgresoMap } | { ok: false; error: string };
 
 /**
  * Lee un archivo exportado para importarlo en `carrera`. Acepta el formato actual
  * ({ app, version, carrera, progreso }) y el formato anterior (el mapa de progreso suelto).
  */
 export function leerArchivoProgreso(carrera: Carrera, data: unknown): ResultadoLectura {
-  const esFormatoActual =
-    typeof data === "object" &&
-    data !== null &&
-    (data as Record<string, unknown>).app === APP_ID;
+  const esFormatoActual = typeof data === "object" && data !== null && (data as Record<string, unknown>).app === APP_ID;
 
   if (esFormatoActual) {
     const archivo = data as Partial<ArchivoProgreso>;

@@ -6,7 +6,7 @@ import { Card } from "@/components/ui/card";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { AppFooter } from "@/components/app-footer";
 import { ESTADO_CONFIG } from "@/lib/estado-config";
-import { PEDIR_CARRERA_URL } from "@/lib/links";
+import { PEDIR_CARRERA_MAILTO } from "@/lib/links";
 import { cn } from "@/lib/utils";
 
 export const metadata: Metadata = {
@@ -31,8 +31,7 @@ export default function NotFound() {
               Esta página no está en el plan
             </h1>
             <p className="text-pretty text-sm text-muted-foreground">
-              Revisamos todos los años y no aparece. Puede que el link esté mal o que la
-              carrera todavía no esté cargada.
+              Revisamos todos los años y no aparece. Puede que el link esté mal o que la carrera no esté cargada.
             </p>
           </div>
 
@@ -52,9 +51,7 @@ export default function NotFound() {
                 Bloqueada
               </span>
             </div>
-            <p className="text-xs text-muted-foreground">
-              Correlativas: una dirección que exista.
-            </p>
+            <p className="text-xs text-muted-foreground">Correlativas: una dirección que exista.</p>
           </Card>
 
           <div className="flex w-full flex-col gap-2 sm:flex-row sm:justify-center">
@@ -65,7 +62,7 @@ export default function NotFound() {
               </Link>
             </Button>
             <Button asChild variant="outline">
-              <a href={PEDIR_CARRERA_URL} target="_blank" rel="noopener noreferrer">
+              <a href={PEDIR_CARRERA_MAILTO}>
                 <MessageSquarePlus className="size-4" />
                 Pedir una carrera
               </a>

@@ -1,18 +1,13 @@
 "use client";
 
 import { useMateria } from "@/hooks/use-materia";
-import { llevaNota } from "@/lib/carrera-utils";
+import { llevaNota, tieneCorrelativas } from "@/lib/carrera-utils";
 import { ESTADO_CONFIG, TIPO_LABEL } from "@/lib/estado-config";
 import type { Materia } from "@/lib/types";
 import { cn } from "@/lib/utils";
 import { TableCell, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import {
-  AvisoIncumplidas,
-  Correlativas,
-  EstadoSelect,
-  NotaInput,
-} from "@/components/materia-shared";
+import { AvisoIncumplidas, Correlativas, EstadoSelect, NotaInput } from "@/components/materia-shared";
 
 interface MateriaRowProps {
   materia: Materia;
@@ -20,20 +15,14 @@ interface MateriaRowProps {
 }
 
 export function MateriaRow({ materia, onScrollToMateria }: MateriaRowProps) {
-  const { progreso, estado, nota, habilitada, incumplidas, handleEstadoChange, handleNotaChange } =
-    useMateria(materia);
+  const { progreso, estado, nota, habilitada, incumplidas, handleEstadoChange, handleNotaChange } = useMateria(materia);
 
   const rowBg = estado === "NO_CURSADA" && !habilitada ? "opacity-45" : ESTADO_CONFIG[estado].fila;
 
   return (
-    <TableRow
-      id={`materia-${materia.codigo}`}
-      className={cn("transition-all duration-200", rowBg)}
-    >
+    <TableRow id={`materia-${materia.codigo}`} className={cn("transition-all duration-200", rowBg)}>
       {/* Codigo */}
-      <TableCell className="font-mono text-xs text-muted-foreground">
-        {materia.codigo}
-      </TableCell>
+      <TableCell className="font-mono text-xs text-muted-foreground">{materia.codigo}</TableCell>
 
       {/* Nombre */}
       <TableCell>
@@ -42,11 +31,7 @@ export function MateriaRow({ materia, onScrollToMateria }: MateriaRowProps) {
             {materia.nombre}
             <AvisoIncumplidas codigos={incumplidas} />
           </span>
-          {materia.aclaracion && (
-            <span className="text-xs text-muted-foreground italic">
-              {materia.aclaracion}
-            </span>
-          )}
+          {materia.aclaracion && <span className="text-xs text-muted-foreground italic">{materia.aclaracion}</span>}
         </div>
       </TableCell>
 
@@ -58,18 +43,12 @@ export function MateriaRow({ materia, onScrollToMateria }: MateriaRowProps) {
       </TableCell>
 
       {/* Horas */}
-      <TableCell className="text-xs text-muted-foreground text-right tabular-nums">
-        {materia.cargaHoraria}
-      </TableCell>
+      <TableCell className="text-xs text-muted-foreground text-right tabular-nums">{materia.cargaHoraria}</TableCell>
 
       {/* Correlativas */}
       <TableCell>
-        {materia.correlativas.length > 0 ? (
-          <Correlativas
-            materia={materia}
-            progreso={progreso}
-            onScrollToMateria={onScrollToMateria}
-          />
+        {tieneCorrelativas(materia) ? (
+          <Correlativas materia={materia} progreso={progreso} onScrollToMateria={onScrollToMateria} />
         ) : (
           <span className="text-xs text-muted-foreground">-</span>
         )}
@@ -89,12 +68,7 @@ export function MateriaRow({ materia, onScrollToMateria }: MateriaRowProps) {
       {/* Nota */}
       <TableCell>
         {llevaNota(estado) ? (
-          <NotaInput
-            estado={estado}
-            nota={nota}
-            onChange={handleNotaChange}
-            className="h-8 w-16"
-          />
+          <NotaInput estado={estado} nota={nota} onChange={handleNotaChange} className="h-8 w-16" />
         ) : (
           <span className="text-xs text-muted-foreground">-</span>
         )}

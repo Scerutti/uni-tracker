@@ -1,11 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { getCarrera } from "@/lib/carreras";
-import {
-  crearArchivoProgreso,
-  leerArchivoProgreso,
-  nombreArchivoProgreso,
-  sanitizarProgreso,
-} from "@/lib/progreso-io";
+import { crearArchivoProgreso, leerArchivoProgreso, nombreArchivoProgreso, sanitizarProgreso } from "@/lib/progreso-io";
 import { carreraDePrueba } from "./fixtures";
 
 const carrera = carreraDePrueba();

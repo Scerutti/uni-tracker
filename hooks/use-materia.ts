@@ -38,13 +38,13 @@ export function useMateria(materia: Materia) {
       const antes = codigosHabilitados(carrera);
       setEstado(carrera, materia.codigo, value as EstadoMateria);
       const despues = useProgresoStore.getState().progresos[carrera.id] ?? {};
-      const nuevas = getMateriasHabilitadasParaCursar(carrera, despues).filter(
-        (m) => !antes.has(m.codigo)
-      );
+      const nuevas = getMateriasHabilitadasParaCursar(carrera, despues).filter((m) => !antes.has(m.codigo));
 
       if (nuevas.length > 0) {
         toast.success(
-          nuevas.length === 1 ? "Se habilitó una materia para cursar" : `Se habilitaron ${nuevas.length} materias para cursar`,
+          nuevas.length === 1
+            ? "Se habilitó una materia para cursar"
+            : `Se habilitaron ${nuevas.length} materias para cursar`,
           { description: nuevas.map((m) => m.nombre).join(", ") }
         );
       }

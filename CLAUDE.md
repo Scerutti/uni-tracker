@@ -10,3 +10,9 @@
 - **Default base branch:** `develop`. A `main` sólo llegan los releases.
 - Con `gh pr create`, pasar la descripción completa con `--body-file`, armada sobre el template.
 - Títulos y commits en español, estilo Conventional Commits.
+
+# Versiones
+
+- La versión está en `package.json` y se muestra en el footer (`components/app-footer.tsx`), enlazada a `CHANGELOG.md`.
+- Cada cambio que ve el usuario suma una línea en `CHANGELOG.md`, en la versión "sin publicar".
+- Al hacer el release a `main`: subir la versión en `package.json` y `package-lock.json` (SemVer: features → minor, fixes → patch) y poner la fecha real en `CHANGELOG.md`.

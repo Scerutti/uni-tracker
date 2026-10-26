@@ -1,11 +1,12 @@
 import Image from "next/image";
 import Link from "next/link";
-import { GraduationCap, ArrowRight, MessageSquarePlus } from "lucide-react";
+import { GraduationCap, ArrowRight, ExternalLink, Mail, MessageSquarePlus } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { AppFooter } from "@/components/app-footer";
 import { getCarrerasPorUniversidad } from "@/lib/carreras";
-import { PEDIR_CARRERA_URL } from "@/lib/links";
+import { PEDIR_CARRERA_GITHUB_URL, PEDIR_CARRERA_MAILTO } from "@/lib/links";
 
 export default function HomePage() {
   const universidades = getCarrerasPorUniversidad();
@@ -22,9 +23,7 @@ export default function HomePage() {
             <h1 className="text-balance text-2xl font-bold tracking-tight sm:text-3xl">
               Seguimiento de Plan de Carrera
             </h1>
-            <p className="text-sm text-muted-foreground">
-              Seleccioná tu carrera para comenzar a registrar tu avance.
-            </p>
+            <p className="text-sm text-muted-foreground">Seleccioná tu carrera para comenzar a registrar tu avance.</p>
           </div>
 
           {universidades.map(({ universidad, carreras }) => (
@@ -39,9 +38,7 @@ export default function HomePage() {
                     priority
                   />
                 </div>
-                <h2 className="text-pretty text-base font-medium text-muted-foreground">
-                  {universidad.nombre}
-                </h2>
+                <h2 className="text-pretty text-base font-medium text-muted-foreground">{universidad.nombre}</h2>
               </div>
 
               <div className="flex w-full flex-col gap-3">
@@ -64,21 +61,33 @@ export default function HomePage() {
             </section>
           ))}
 
-          <a href={PEDIR_CARRERA_URL} target="_blank" rel="noopener noreferrer" className="w-full">
-            <Card className="border-dashed transition-colors hover:border-primary">
-              <CardContent className="flex items-center gap-4 px-5 py-4">
-                <div className="flex items-center justify-center rounded-lg bg-muted p-2.5">
-                  <MessageSquarePlus className="size-5 text-muted-foreground" />
+          <Card className="w-full border-dashed">
+            <CardContent className="flex items-start gap-4 px-5 py-4">
+              <div className="flex items-center justify-center rounded-lg bg-muted p-2.5">
+                <MessageSquarePlus className="size-5 text-muted-foreground" />
+              </div>
+              <div className="flex flex-1 flex-col items-start gap-1 text-left">
+                <span className="text-sm font-medium">¿No está tu carrera?</span>
+                <span className="text-xs text-muted-foreground">
+                  Mandanos la universidad, la carrera y el link al plan de estudios, y la sumamos.
+                </span>
+                <div className="mt-2 flex flex-wrap gap-2">
+                  <Button asChild size="sm">
+                    <a href={PEDIR_CARRERA_MAILTO}>
+                      <Mail className="size-4" />
+                      Pedila por mail
+                    </a>
+                  </Button>
+                  <Button asChild size="sm" variant="ghost">
+                    <a href={PEDIR_CARRERA_GITHUB_URL} target="_blank" rel="noopener noreferrer">
+                      <ExternalLink className="size-4" />
+                      Abrir un issue en GitHub
+                    </a>
+                  </Button>
                 </div>
-                <div className="flex flex-1 flex-col items-start gap-0.5 text-left">
-                  <span className="text-sm font-medium">¿No está tu carrera?</span>
-                  <span className="text-xs text-muted-foreground">
-                    Pedila en GitHub con el link al plan de estudios.
-                  </span>
-                </div>
-              </CardContent>
-            </Card>
-          </a>
+              </div>
+            </CardContent>
+          </Card>
         </div>
       </main>
 

@@ -1,25 +1,18 @@
 "use client";
 
-import type { ChangeEvent } from "react";
+import type { ChangeEvent, ReactNode } from "react";
 import { CheckCircle2, Lock, TriangleAlert } from "lucide-react";
-import { getEstado, NOTA_MAXIMA, notaInvalida, requisitoCumplido } from "@/lib/carrera-utils";
-import { ESTADO_CONFIG, ESTADOS } from "@/lib/estado-config";
+import { getEstado, NOTA_MAXIMA, notaInvalida, requisitoCumplido, tieneCorrelativas } from "@/lib/carrera-utils";
+import { ESTADO_CONFIG } from "@/lib/estado-config";
 import { abreviarCodigo, getMateriaByCode } from "@/lib/plan";
-import type { Carrera, EstadoMateria, Materia, ProgresoMap } from "@/lib/types";
+import { type Carrera, type EstadoMateria, type Materia, type ProgresoMap, type Requisito, ESTADOS } from "@/lib/types";
 import { useCarrera } from "@/components/carrera-provider";
 import { cn } from "@/lib/utils";
 import { Input } from "@/components/ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 
-const CHIP_BASE =
-  "inline-flex items-center gap-1 rounded px-1.5 py-0.5 text-xs font-medium transition-colors";
+const CHIP_BASE = "inline-flex items-center gap-1 rounded px-1.5 py-0.5 text-xs font-medium transition-colors";
 
 export function nombresDeMaterias(carrera: Carrera, codigos: string[]): string {
   return codigos.map((c) => getMateriaByCode(carrera, c)?.nombre ?? c).join(", ");
@@ -31,24 +24,79 @@ interface CorrelativasProps {
   onScrollToMateria?: (codigo: string) => void;
 }
 
+type Para = "cursar" | "rendir";
+
 /**
- * Chips con las correlativas para cursar y su estado actual.
+ * Chips con las correlativas y su estado actual. Si la materia tiene correlativas
+ * distintas para rendir el final, muestra las dos listas con su etiqueta.
  */
 export function Correlativas({ materia, progreso, onScrollToMateria }: CorrelativasProps) {
-  if (materia.correlativas.length === 0) return null;
+  const rendir = materia.correlativasRendir;
+  if (!tieneCorrelativas(materia)) return null;
+
+  if (!rendir) {
+    return (
+      <ListaRequisitos
+        materia={materia}
+        requisitos={materia.correlativas}
+        para="cursar"
+        progreso={progreso}
+        onScrollToMateria={onScrollToMateria}
+      />
+    );
+  }
 
   return (
-    <div className="flex flex-wrap gap-1">
-      {materia.correlativas.map((r) =>
-        typeof r === "string" ? (
-          <ChipMateria
-            key={r}
-            codigo={r}
+    <div className="flex flex-col gap-1">
+      {materia.correlativas.length > 0 && (
+        <FilaRequisitos etiqueta="Cursar">
+          <ListaRequisitos
+            materia={materia}
+            requisitos={materia.correlativas}
+            para="cursar"
             progreso={progreso}
             onScrollToMateria={onScrollToMateria}
           />
+        </FilaRequisitos>
+      )}
+      {rendir.length > 0 && (
+        <FilaRequisitos etiqueta="Rendir">
+          <ListaRequisitos
+            materia={materia}
+            requisitos={rendir}
+            para="rendir"
+            progreso={progreso}
+            onScrollToMateria={onScrollToMateria}
+          />
+        </FilaRequisitos>
+      )}
+    </div>
+  );
+}
+
+function FilaRequisitos({ etiqueta, children }: { etiqueta: string; children: ReactNode }) {
+  return (
+    <div className="flex items-center gap-1.5">
+      <span className="w-11 shrink-0 text-xs text-muted-foreground">{etiqueta}</span>
+      {children}
+    </div>
+  );
+}
+
+function ListaRequisitos({
+  materia,
+  requisitos,
+  para,
+  progreso,
+  onScrollToMateria,
+}: CorrelativasProps & { requisitos: Requisito[]; para: Para }) {
+  return (
+    <div className="flex flex-wrap gap-1">
+      {requisitos.map((r) =>
+        typeof r === "string" ? (
+          <ChipMateria key={r} codigo={r} progreso={progreso} onScrollToMateria={onScrollToMateria} />
         ) : (
-          <ChipAnio key={`anio-${r.anio}`} materia={materia} anio={r.anio} progreso={progreso} />
+          <ChipAnio key={`anio-${r.anio}`} materia={materia} anio={r.anio} para={para} progreso={progreso} />
         )
       )}
     </div>
@@ -89,9 +137,19 @@ function ChipMateria({
   );
 }
 
-function ChipAnio({ materia, anio, progreso }: { materia: Materia; anio: number; progreso: ProgresoMap }) {
+function ChipAnio({
+  materia,
+  anio,
+  para,
+  progreso,
+}: {
+  materia: Materia;
+  anio: number;
+  para: Para;
+  progreso: ProgresoMap;
+}) {
   const carrera = useCarrera();
-  const cumplido = requisitoCumplido(carrera, materia, { anio }, progreso);
+  const cumplido = requisitoCumplido(carrera, materia, { anio }, progreso, para);
   const Icono = cumplido ? CheckCircle2 : Lock;
 
   return (
@@ -108,7 +166,13 @@ function ChipAnio({ materia, anio, progreso }: { materia: Materia; anio: number;
       <TooltipContent side="top">
         <p className="font-medium">{anio}° año completo</p>
         <p className="text-xs opacity-80">
-          {cumplido ? "Todas regulares o aprobadas" : "Faltan materias por regularizar"}
+          {para === "cursar"
+            ? cumplido
+              ? "Todas regulares o aprobadas"
+              : "Faltan materias por regularizar"
+            : cumplido
+              ? "Todas aprobadas"
+              : "Faltan materias por aprobar"}
         </p>
       </TooltipContent>
     </Tooltip>

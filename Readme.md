@@ -9,6 +9,14 @@ Aplicación web para **llevar el seguimiento del plan de estudios** de una carre
 - Entender dependencias/correlatividades para planificar cursadas.
 - Tener un “tablero” rápido del avance general.
 
+## Capturas
+
+<p>
+  <img src="docs/screenshots/inicio.jpg" alt="Inicio: carreras agrupadas por universidad" width="32%" />
+  <img src="docs/screenshots/avance.jpg" alt="Avance de la carrera, promedio y materias habilitadas" width="32%" />
+  <img src="docs/screenshots/correlativas-rendir.jpg" alt="Correlativas para cursar y para rendir" width="32%" />
+</p>
+
 ## Stack / Tecnologías
 
 - **Next.js** (App Router)
@@ -20,12 +28,13 @@ Aplicación web para **llevar el seguimiento del plan de estudios** de una carre
 
 ## Requisitos
 
-- **Node.js 20+** (recomendado: 20.9 o superior)
+- **Node.js 22.12+ o 24** (lo pide Vitest; la CI usa 24)
 - Un gestor de paquetes: `npm` o `pnpm`
 
 ## Instalación
 
 Con **npm**:
+
 ```bash
 npm install
 npm run dev
@@ -72,7 +81,7 @@ Cada carrera es un archivo en `lib/carreras/`, por ejemplo
 4. Corré `npm test`: valida todas las carreras (códigos repetidos,
    correlativas que no existen, de años posteriores o circulares).
 
-Si no querés armarla vos, pedila con el template de issue **Nueva carrera**.
+Si no querés armarla vos, pedila desde la home de la app (por mail) o con el template de issue **Nueva carrera**.
 
 ## Contribuir
 
@@ -82,6 +91,7 @@ Las contribuciones son bienvenidas.
 - Si querés implementar algo: **abrí un Pull Request (PR)**.
 
 Sugerencia para PR's:
+
 1. Fork del repo
 2. Crear una rama (`feat/...` o `fix/...`)
 3. Cambios con una descripción clara
@@ -92,4 +102,5 @@ Sugerencia para PR's:
 Si necesitás ayuda o querés discutir una idea, **abrí una Issue** y lo vemos ahí.
 
 ---
+
 Hecho con Next.js + TypeScript.
