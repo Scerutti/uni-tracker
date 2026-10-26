@@ -20,6 +20,12 @@ updates:
       # Los tipos siguen la versión de Node del proyecto, no la última.
       - dependency-name: "@types/node"
         update-types: [version-update:semver-major]
+      # ESLint 10 rompe eslint-plugin-react (lo trae eslint-config-next 16): se migra cuando Next lo soporte.
+      - dependency-name: eslint
+        update-types: [version-update:semver-major]
+      # TypeScript 7 falla el typecheck y el build de Next 16: se migra cuando Next lo soporte.
+      - dependency-name: typescript
+        update-types: [version-update:semver-major]
 
   - package-ecosystem: github-actions
     directory: /

@@ -1,6 +1,7 @@
 "use client";
 
 import { useMateria } from "@/hooks/use-materia";
+import { llevaNota } from "@/lib/carrera-utils";
 import { ESTADO_CONFIG, TIPO_LABEL } from "@/lib/estado-config";
 import type { Materia } from "@/lib/types";
 import { cn } from "@/lib/utils";
@@ -87,7 +88,7 @@ export function MateriaRow({ materia, onScrollToMateria }: MateriaRowProps) {
 
       {/* Nota */}
       <TableCell>
-        {estado === "REGULAR" || estado === "APROBADA" ? (
+        {llevaNota(estado) ? (
           <NotaInput
             estado={estado}
             nota={nota}

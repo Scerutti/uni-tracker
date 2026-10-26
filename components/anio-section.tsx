@@ -1,8 +1,9 @@
 "use client";
 
 import { useMemo } from "react";
-import { useCarreraStore } from "@/lib/store";
+import { useAniosExpandidos, useProgreso, useProgresoStore } from "@/lib/store";
 import { getEstado, estaHabilitadaParaCursar } from "@/lib/carrera-utils";
+import { useCarrera } from "@/components/carrera-provider";
 import type { AnioData, EstadoMateria, FiltroActivo } from "@/lib/types";
 import { ESTADO_CONFIG } from "@/lib/estado-config";
 import { MateriaRow } from "./materia-row";
@@ -31,12 +32,13 @@ interface AnioSectionProps {
 }
 
 export function AnioSection({ anioData, filtro, onScrollToMateria }: AnioSectionProps) {
-  const progreso = useCarreraStore((s) => s.progreso);
-  const anioExpandido = useCarreraStore((s) => s.anioExpandido);
+  const carrera = useCarrera();
+  const progreso = useProgreso(carrera.id);
+  const aniosExpandidos = useAniosExpandidos(carrera.id);
   const isMobile = useIsMobile();
-  const setAnioExpandido = useCarreraStore((s) => s.setAnioExpandido);
+  const toggleAnio = useProgresoStore((s) => s.toggleAnio);
 
-  const isOpen = anioExpandido.includes(anioData.anio);
+  const isOpen = aniosExpandidos.includes(anioData.anio);
 
   const materiasFiltradas = useMemo(() => {
     return anioData.materias.filter((m) => {
@@ -45,14 +47,14 @@ export function AnioSection({ anioData, filtro, onScrollToMateria }: AnioSection
         case "aprobadas":
           return estado === "APROBADA";
         case "habilitadas":
-          return estaHabilitadaParaCursar(m, progreso);
+          return estaHabilitadaParaCursar(carrera, m, progreso);
         case "pendientes":
           return estado === "NO_CURSADA";
         default:
           return true;
       }
     });
-  }, [anioData.materias, filtro, progreso]);
+  }, [carrera, anioData.materias, filtro, progreso]);
 
   const contar = (estado: EstadoMateria) =>
     anioData.materias.filter((m) => getEstado(m.codigo, progreso) === estado).length;
@@ -65,7 +67,7 @@ export function AnioSection({ anioData, filtro, onScrollToMateria }: AnioSection
   return (
       <Collapsible
           open={isOpen}
-          onOpenChange={() => setAnioExpandido(anioData.anio)}
+          onOpenChange={() => toggleAnio(carrera.id, anioData.anio)}
       >
       <CollapsibleTrigger className="flex w-full items-center justify-between rounded-lg bg-card px-4 py-3 border transition-colors hover:bg-muted/50 cursor-pointer">
         <div className="flex items-center gap-3">

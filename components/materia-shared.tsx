@@ -2,10 +2,11 @@
 
 import type { ChangeEvent } from "react";
 import { CheckCircle2, Lock, TriangleAlert } from "lucide-react";
-import { getEstado, NOTA_MINIMA_APROBACION, notaInvalida, requisitoCumplido } from "@/lib/carrera-utils";
+import { getEstado, NOTA_MAXIMA, notaInvalida, requisitoCumplido } from "@/lib/carrera-utils";
 import { ESTADO_CONFIG, ESTADOS } from "@/lib/estado-config";
-import { getMateriaByCode } from "@/lib/plan-data";
-import type { EstadoMateria, Materia, ProgresoMap } from "@/lib/types";
+import { abreviarCodigo, getMateriaByCode } from "@/lib/plan";
+import type { Carrera, EstadoMateria, Materia, ProgresoMap } from "@/lib/types";
+import { useCarrera } from "@/components/carrera-provider";
 import { cn } from "@/lib/utils";
 import { Input } from "@/components/ui/input";
 import {
@@ -20,8 +21,8 @@ import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip
 const CHIP_BASE =
   "inline-flex items-center gap-1 rounded px-1.5 py-0.5 text-xs font-medium transition-colors";
 
-export function nombresDeMaterias(codigos: string[]): string {
-  return codigos.map((c) => getMateriaByCode(c)?.nombre ?? c).join(", ");
+export function nombresDeMaterias(carrera: Carrera, codigos: string[]): string {
+  return codigos.map((c) => getMateriaByCode(carrera, c)?.nombre ?? c).join(", ");
 }
 
 interface CorrelativasProps {
@@ -63,8 +64,9 @@ function ChipMateria({
   progreso: ProgresoMap;
   onScrollToMateria?: (codigo: string) => void;
 }) {
+  const carrera = useCarrera();
   const { label, chip, icono: Icono } = ESTADO_CONFIG[getEstado(codigo, progreso)];
-  const nombre = getMateriaByCode(codigo)?.nombre ?? "Desconocida";
+  const nombre = getMateriaByCode(carrera, codigo)?.nombre ?? "Desconocida";
 
   return (
     <Tooltip>
@@ -76,7 +78,7 @@ function ChipMateria({
           aria-label={`${nombre}: ${label}`}
         >
           <Icono className="size-3" />
-          {codigo.slice(-3)}
+          {abreviarCodigo(carrera, codigo)}
         </button>
       </TooltipTrigger>
       <TooltipContent side="top">
@@ -88,7 +90,8 @@ function ChipMateria({
 }
 
 function ChipAnio({ materia, anio, progreso }: { materia: Materia; anio: number; progreso: ProgresoMap }) {
-  const cumplido = requisitoCumplido(materia, { anio }, progreso);
+  const carrera = useCarrera();
+  const cumplido = requisitoCumplido(carrera, materia, { anio }, progreso);
   const Icono = cumplido ? CheckCircle2 : Lock;
 
   return (
@@ -116,6 +119,7 @@ function ChipAnio({ materia, anio, progreso }: { materia: Materia; anio: number;
  * Ícono de advertencia cuando el estado de la materia no acompaña a sus correlativas.
  */
 export function AvisoIncumplidas({ codigos }: { codigos: string[] }) {
+  const carrera = useCarrera();
   if (codigos.length === 0) return null;
 
   return (
@@ -131,7 +135,7 @@ export function AvisoIncumplidas({ codigos }: { codigos: string[] }) {
       </TooltipTrigger>
       <TooltipContent side="top" className="max-w-xs">
         <p className="font-medium">Correlativas no cumplidas</p>
-        <p className="text-xs opacity-80">{nombresDeMaterias(codigos)}</p>
+        <p className="text-xs opacity-80">{nombresDeMaterias(carrera, codigos)}</p>
       </TooltipContent>
     </Tooltip>
   );
@@ -177,20 +181,21 @@ export function NotaInput({
   onChange: (e: ChangeEvent<HTMLInputElement>) => void;
   className?: string;
 }) {
-  const invalida = notaInvalida(estado, nota);
+  const carrera = useCarrera();
+  const invalida = notaInvalida(carrera, estado, nota);
 
   return (
     <Input
       type="number"
       placeholder="-"
       min={0}
-      max={10}
+      max={NOTA_MAXIMA}
       step={1}
       value={nota ?? ""}
       onChange={onChange}
       aria-label="Nota"
       aria-invalid={invalida || undefined}
-      title={invalida ? `La nota mínima para aprobar es ${NOTA_MINIMA_APROBACION}` : undefined}
+      title={invalida ? `La nota mínima para aprobar es ${carrera.notaMinima}` : undefined}
       className={cn("text-xs text-center tabular-nums", className)}
     />
   );

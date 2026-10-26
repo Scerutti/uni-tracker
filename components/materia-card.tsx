@@ -2,7 +2,9 @@
 
 import { TriangleAlert } from "lucide-react";
 import { useMateria } from "@/hooks/use-materia";
+import { llevaNota } from "@/lib/carrera-utils";
 import { ESTADO_CONFIG, TIPO_LABEL } from "@/lib/estado-config";
+import { useCarrera } from "@/components/carrera-provider";
 import type { Materia } from "@/lib/types";
 import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
@@ -22,6 +24,7 @@ interface MateriaCardProps {
 export function MateriaCard({ materia, onScrollToMateria }: MateriaCardProps) {
     const { progreso, estado, nota, habilitada, incumplidas, handleEstadoChange, handleNotaChange } =
         useMateria(materia);
+    const carrera = useCarrera();
     const config = ESTADO_CONFIG[estado];
 
     return (
@@ -58,7 +61,7 @@ export function MateriaCard({ materia, onScrollToMateria }: MateriaCardProps) {
             {incumplidas.length > 0 && (
                 <p className="flex items-start gap-1.5 text-xs text-amber-700 dark:text-amber-400">
                     <TriangleAlert className="size-3.5 shrink-0 mt-px" />
-                    <span>Correlativas no cumplidas: {nombresDeMaterias(incumplidas)}</span>
+                    <span>Correlativas no cumplidas: {nombresDeMaterias(carrera, incumplidas)}</span>
                 </p>
             )}
 
@@ -77,7 +80,7 @@ export function MateriaCard({ materia, onScrollToMateria }: MateriaCardProps) {
                     className="flex-1"
                 />
 
-                {(estado === "REGULAR" || estado === "APROBADA") && (
+                {llevaNota(estado) && (
                     <NotaInput
                         estado={estado}
                         nota={nota}

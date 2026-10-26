@@ -1,8 +1,9 @@
 "use client";
 
 import { useCallback, useRef } from "react";
-import { useCarreraStore } from "@/lib/store";
-import { crearArchivoProgreso, leerArchivoProgreso } from "@/lib/progreso-io";
+import { useProgreso, useProgresoStore } from "@/lib/store";
+import { crearArchivoProgreso, leerArchivoProgreso, nombreArchivoProgreso } from "@/lib/progreso-io";
+import { useCarrera } from "@/components/carrera-provider";
 import type { FiltroActivo } from "@/lib/types";
 import { Button } from "@/components/ui/button";
 import {
@@ -27,20 +28,21 @@ import { Download, Upload, RotateCcw } from "lucide-react";
 import { toast } from "sonner";
 
 export function Toolbar() {
-  const filtro = useCarreraStore((s) => s.filtro);
-  const setFiltro = useCarreraStore((s) => s.setFiltro);
-  const progreso = useCarreraStore((s) => s.progreso);
-  const importarProgreso = useCarreraStore((s) => s.importarProgreso);
-  const resetProgreso = useCarreraStore((s) => s.resetProgreso);
+  const carrera = useCarrera();
+  const filtro = useProgresoStore((s) => s.filtro);
+  const setFiltro = useProgresoStore((s) => s.setFiltro);
+  const progreso = useProgreso(carrera.id);
+  const importarProgreso = useProgresoStore((s) => s.importarProgreso);
+  const resetProgreso = useProgresoStore((s) => s.resetProgreso);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleExport = useCallback(() => {
-    const json = JSON.stringify(crearArchivoProgreso(progreso), null, 2);
+    const json = JSON.stringify(crearArchivoProgreso(carrera, progreso), null, 2);
     const blob = new Blob([json], { type: "application/json" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = `progreso-carrera-${new Date().toISOString().slice(0, 10)}.json`;
+    a.download = nombreArchivoProgreso(carrera);
     a.click();
     URL.revokeObjectURL(url);
 
@@ -51,7 +53,7 @@ export function Toolbar() {
           ? "Se exportó 1 materia con progreso."
           : `Se exportaron ${count} materias con progreso.`,
     });
-  }, [progreso]);
+  }, [carrera, progreso]);
 
   const handleImport = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -62,14 +64,14 @@ export function Toolbar() {
       reader.onload = (ev) => {
         try {
           const raw = JSON.parse(ev.target?.result as string);
-          const resultado = leerArchivoProgreso(raw);
+          const resultado = leerArchivoProgreso(carrera, raw);
 
           if (!resultado.ok) {
             toast.error("Error al importar", { description: resultado.error });
             return;
           }
 
-          importarProgreso(resultado.progreso);
+          importarProgreso(carrera, resultado.progreso);
 
           const count = Object.values(resultado.progreso).filter(
             (v) => v.estado !== "NO_CURSADA"
@@ -90,15 +92,15 @@ export function Toolbar() {
       reader.readAsText(file);
       if (fileInputRef.current) fileInputRef.current.value = "";
     },
-    [importarProgreso]
+    [carrera, importarProgreso]
   );
 
   const handleReset = useCallback(() => {
-    resetProgreso();
+    resetProgreso(carrera.id);
     toast.info("Progreso reiniciado", {
       description: "Todas las materias fueron marcadas como no cursadas.",
     });
-  }, [resetProgreso]);
+  }, [carrera.id, resetProgreso]);
 
   return (
     <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
@@ -160,8 +162,8 @@ export function Toolbar() {
             <AlertDialogHeader>
               <AlertDialogTitle>Reiniciar progreso</AlertDialogTitle>
               <AlertDialogDescription>
-                Esto eliminará todo tu progreso guardado. Esta acción no se
-                puede deshacer. Te recomendamos exportar tu progreso antes.
+                Esto eliminará tu progreso guardado en {carrera.nombreCorto}. Esta
+                acción no se puede deshacer. Te recomendamos exportar tu progreso antes.
               </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>
