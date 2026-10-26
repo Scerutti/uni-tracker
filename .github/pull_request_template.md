@@ -29,7 +29,7 @@ Cierra #
 ## Verificación
 
 - [ ] `npm run typecheck` pasa.
-- [ ] `npm run lint` pasa.
+- [ ] `npm run lint` y `npm run format:check` pasan.
 - [ ] `npm test` pasa. Tests nuevos o cambiados: <!-- archivos, o "ninguno" -->
 - [ ] Probé la UI en el navegador (celular y escritorio, si aplica).
 

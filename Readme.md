@@ -20,7 +20,7 @@ Aplicación web para **llevar el seguimiento del plan de estudios** de una carre
 
 ## Requisitos
 
-- **Node.js 20+** (recomendado: 20.9 o superior)
+- **Node.js 22.12+ o 24** (lo pide Vitest; la CI usa 24)
 - Un gestor de paquetes: `npm` o `pnpm`
 
 ## Instalación
