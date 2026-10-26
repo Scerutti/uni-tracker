@@ -5,8 +5,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { AppFooter } from "@/components/app-footer";
 import { getCarrerasPorUniversidad } from "@/lib/carreras";
-
-const PEDIR_CARRERA_URL = "https://github.com/Scerutti/uni-tracker/issues/new?template=nueva-carrera.yml";
+import { PEDIR_CARRERA_URL } from "@/lib/links";
 
 export default function HomePage() {
   const universidades = getCarrerasPorUniversidad();
