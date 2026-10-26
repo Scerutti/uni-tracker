@@ -1,5 +1,6 @@
 import { Mail } from "lucide-react";
 import packageJson from "@/package.json";
+import { CONTACTO_EMAIL } from "@/lib/links";
 
 /** Versión de la app; sale de `package.json`, que se sube en cada release. */
 const VERSION = packageJson.version;
@@ -26,7 +27,7 @@ export function AppFooter() {
 
         <div className="flex items-center gap-4">
           <a
-            href="mailto:softsys95@gmail.com"
+            href={`mailto:${CONTACTO_EMAIL}`}
             className="inline-flex items-center gap-1.5 transition-colors hover:text-foreground"
           >
             <Mail className="size-3.5" />

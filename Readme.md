@@ -73,7 +73,7 @@ Cada carrera es un archivo en `lib/carreras/`, por ejemplo
 4. Corré `npm test`: valida todas las carreras (códigos repetidos,
    correlativas que no existen, de años posteriores o circulares).
 
-Si no querés armarla vos, pedila con el template de issue **Nueva carrera**.
+Si no querés armarla vos, pedila desde la home de la app (por mail) o con el template de issue **Nueva carrera**.
 
 ## Contribuir
 

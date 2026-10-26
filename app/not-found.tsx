@@ -6,7 +6,7 @@ import { Card } from "@/components/ui/card";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { AppFooter } from "@/components/app-footer";
 import { ESTADO_CONFIG } from "@/lib/estado-config";
-import { PEDIR_CARRERA_URL } from "@/lib/links";
+import { PEDIR_CARRERA_MAILTO } from "@/lib/links";
 import { cn } from "@/lib/utils";
 
 export const metadata: Metadata = {
@@ -62,7 +62,7 @@ export default function NotFound() {
               </Link>
             </Button>
             <Button asChild variant="outline">
-              <a href={PEDIR_CARRERA_URL} target="_blank" rel="noopener noreferrer">
+              <a href={PEDIR_CARRERA_MAILTO}>
                 <MessageSquarePlus className="size-4" />
                 Pedir una carrera
               </a>
