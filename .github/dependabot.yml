@@ -7,10 +7,13 @@ updates:
     schedule:
       interval: monthly
     open-pull-requests-limit: 5
-    # Minor y patch juntos en un solo PR; los major llegan de a uno.
+    # Como mucho dos PR por mes: minor y patch juntos, y todos los major juntos en otro
+    # (los major se revisan con más cuidado; si uno rompe, se ignora abajo).
     groups:
       npm-minor-patch:
         update-types: [minor, patch]
+      npm-major:
+        update-types: [major]
     ignore:
       # Los major de Next traen cambios que rompen: se migran a mano.
       - dependency-name: next
@@ -33,6 +36,7 @@ updates:
     schedule:
       interval: monthly
     open-pull-requests-limit: 3
+    # Un solo PR por mes con todas las actions, major incluidas.
     groups:
-      actions-minor-patch:
-        update-types: [minor, patch]
+      actions:
+        patterns: ["*"]
