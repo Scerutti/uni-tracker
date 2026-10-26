@@ -24,7 +24,7 @@ Cierra #
 ## Release
 
 - [ ] No cambia la versión.
-- [ ] Sube la versión a **x.y.z**: `package.json` y `package-lock.json`.
+- [ ] Sube la versión a **x.y.z**: `package.json`, `package-lock.json` y `CHANGELOG.md` (la versión se ve en el footer).
 
 ## Verificación
 

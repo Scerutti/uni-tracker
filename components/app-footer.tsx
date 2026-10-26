@@ -1,4 +1,10 @@
 import { Mail } from "lucide-react";
+import packageJson from "@/package.json";
+
+/** Versión de la app; sale de `package.json`, que se sube en cada release. */
+const VERSION = packageJson.version;
+
+const CHANGELOG_URL = "https://github.com/Scerutti/uni-tracker/blob/main/CHANGELOG.md";
 
 export function AppFooter() {
   const currentYear = new Date().getFullYear();
@@ -28,6 +34,16 @@ export function AppFooter() {
           </a>
           <span className="text-border">|</span>
           <span>{currentYear}</span>
+          <span className="text-border">|</span>
+          <a
+            href={CHANGELOG_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            title="Qué cambió en cada versión"
+            className="font-mono text-xs transition-colors hover:text-foreground"
+          >
+            v{VERSION}
+          </a>
         </div>
       </div>
     </footer>
