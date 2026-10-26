@@ -8,6 +8,8 @@ import {
   getCorrelativasIncumplidas,
   notaInvalida,
   puedeInteractuar,
+  requisitoCumplido,
+  tieneCorrelativas,
 } from "@/lib/carrera-utils";
 import { getMateriaByCode } from "@/lib/plan";
 import type { Carrera, EstadoMateria, ProgresoMap } from "@/lib/types";
@@ -63,6 +65,21 @@ describe("correlativas para rendir", () => {
     expect(estaHabilitadaParaRendir(carrera, m(carrera, "B1"), progreso({ A1: "APROBADA", B1: "REGULAR" }))).toBe(
       true
     );
+  });
+});
+
+describe("requisitoCumplido", () => {
+  it("un año completo pide regulares para cursar y aprobadas para rendir", () => {
+    const p = progreso({ A1: "APROBADA", A2: "REGULAR" });
+    expect(requisitoCumplido(carrera, m(carrera, "B2"), { anio: 1 }, p)).toBe(true);
+    expect(requisitoCumplido(carrera, m(carrera, "B2"), { anio: 1 }, p, "rendir")).toBe(false);
+    expect(requisitoCumplido(carrera, m(carrera, "B2"), { anio: 1 }, { ...p, A2: { estado: "APROBADA", nota: null } }, "rendir")).toBe(true);
+  });
+
+  it("tieneCorrelativas mira las de cursar y las de rendir", () => {
+    expect(tieneCorrelativas(m(carrera, "A1"))).toBe(false);
+    expect(tieneCorrelativas(m(carrera, "B1"))).toBe(true);
+    expect(tieneCorrelativas({ ...m(carrera, "A1"), correlativasRendir: ["A2"] })).toBe(true);
   });
 });
 

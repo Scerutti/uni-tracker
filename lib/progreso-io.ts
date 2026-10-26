@@ -1,12 +1,10 @@
-import type { Carrera, EstadoMateria, ProgresoMap } from "./types";
+import { type Carrera, type EstadoMateria, type ProgresoMap, ESTADOS } from "./types";
 import { getCarrera } from "./carreras";
 import { esNotaValida, llevaNota } from "./carrera-utils";
 import { getMateriaByCode } from "./plan";
 
 const APP_ID = "uni-tracker";
 const FORMATO_VERSION = 1;
-
-const VALID_ESTADOS: EstadoMateria[] = ["NO_CURSADA", "EN_CURSO", "REGULAR", "APROBADA"];
 
 export interface ArchivoProgreso {
   app: typeof APP_ID;
@@ -39,7 +37,7 @@ export function sanitizarProgreso(carrera: Carrera, data: unknown): ProgresoMap 
     const entry = valor as Record<string, unknown>;
     const estado = entry.estado;
 
-    if (typeof estado !== "string" || !VALID_ESTADOS.includes(estado as EstadoMateria)) {
+    if (typeof estado !== "string" || !ESTADOS.includes(estado as EstadoMateria)) {
       descartadas++;
       continue;
     }

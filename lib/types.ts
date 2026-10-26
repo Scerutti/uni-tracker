@@ -1,6 +1,9 @@
 export type TipoMateria = "Anual" | "Cuatrim C1" | "Cuatrim C2";
 
-export type EstadoMateria = "NO_CURSADA" | "EN_CURSO" | "REGULAR" | "APROBADA";
+/** Estados de una materia, en el orden en que se avanza. */
+export const ESTADOS = ["NO_CURSADA", "EN_CURSO", "REGULAR", "APROBADA"] as const;
+
+export type EstadoMateria = (typeof ESTADOS)[number];
 
 /**
  * Requisito de correlatividad: el código de una materia puntual
@@ -58,4 +61,7 @@ export interface ProgresoMateria {
 
 export type ProgresoMap = Record<string, ProgresoMateria>;
 
-export type FiltroActivo = "todas" | "aprobadas" | "habilitadas" | "pendientes";
+/** Filtros de la lista de materias. */
+export const FILTROS = ["todas", "aprobadas", "habilitadas", "rendir", "pendientes"] as const;
+
+export type FiltroActivo = (typeof FILTROS)[number];

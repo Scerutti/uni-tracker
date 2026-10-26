@@ -2,7 +2,7 @@
 
 import { useMemo } from "react";
 import { useAniosExpandidos, useProgreso, useProgresoStore } from "@/lib/store";
-import { getEstado, estaHabilitadaParaCursar } from "@/lib/carrera-utils";
+import { getEstado, estaHabilitadaParaCursar, estaHabilitadaParaRendir } from "@/lib/carrera-utils";
 import { useCarrera } from "@/components/carrera-provider";
 import type { AnioData, EstadoMateria, FiltroActivo } from "@/lib/types";
 import { ESTADO_CONFIG } from "@/lib/estado-config";
@@ -48,6 +48,8 @@ export function AnioSection({ anioData, filtro, onScrollToMateria }: AnioSection
           return estado === "APROBADA";
         case "habilitadas":
           return estaHabilitadaParaCursar(carrera, m, progreso);
+        case "rendir":
+          return estaHabilitadaParaRendir(carrera, m, progreso);
         case "pendientes":
           return estado === "NO_CURSADA";
         default:

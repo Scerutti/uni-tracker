@@ -36,7 +36,7 @@ const plan: AnioData[] = [
       { codigo: "340318", nombre: "Probabilidad y Estadística", tipo: "Cuatrim C1", cargaHoraria: 96, correlativas: ["340211", "340212"] },
       { codigo: "340319", nombre: "Paradigmas de Programación", tipo: "Cuatrim C1", cargaHoraria: 96, correlativas: ["340209", "340210"] },
       { codigo: "340320", nombre: "Teoría de la Computación", tipo: "Cuatrim C2", cargaHoraria: 96, correlativas: ["340211"] },
-      { codigo: "340321", nombre: "Taller de Integración", tipo: "Cuatrim C2", cargaHoraria: 96, correlativas: [{ anio: 2 }], correlativasRendir: [{ anio: 3 }], aclaracion: "Cursar: 2° año completo. Rendir: 3° año aprobado." },
+      { codigo: "340321", nombre: "Taller de Integración", tipo: "Cuatrim C2", cargaHoraria: 96, correlativas: [{ anio: 2 }], correlativasRendir: [{ anio: 3 }] },
     ],
   },
   {
@@ -59,7 +59,7 @@ const plan: AnioData[] = [
       { codigo: "340530", nombre: "Práctica Profesional Supervisada", tipo: "Anual", cargaHoraria: 200, correlativas: ["340422", "340425"] },
       { codigo: "340531", nombre: "Sistemas Distribuidos", tipo: "Cuatrim C2", cargaHoraria: 96, correlativas: ["340316", "340317"] },
       { codigo: "340532", nombre: "Emprendimientos Tecnológicos", tipo: "Cuatrim C2", cargaHoraria: 64, correlativas: ["340425", "340426"] },
-      { codigo: "340533", nombre: "Tesina de Grado", tipo: "Anual", cargaHoraria: 200, correlativas: ["340423", "340424", "340425"], correlativasRendir: [{ anio: 5 }], aclaracion: "Rendir: 5° año aprobado." },
+      { codigo: "340533", nombre: "Tesina de Grado", tipo: "Anual", cargaHoraria: 200, correlativas: ["340423", "340424", "340425"], correlativasRendir: [{ anio: 5 }] },
     ],
   },
 ];

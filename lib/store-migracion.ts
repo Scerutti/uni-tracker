@@ -1,4 +1,4 @@
-import type { FiltroActivo, ProgresoMap } from "./types";
+import { type FiltroActivo, type ProgresoMap, FILTROS } from "./types";
 import { CARRERA_ORIGINAL, getCarrera } from "./carreras";
 import { sanitizarProgreso } from "./progreso-io";
 
@@ -12,8 +12,6 @@ export interface EstadoPersistido {
 }
 
 export const VERSION_ESTADO = 2;
-
-const FILTROS: FiltroActivo[] = ["todas", "aprobadas", "habilitadas", "pendientes"];
 
 function filtroValido(filtro: unknown): FiltroActivo {
   return FILTROS.includes(filtro as FiltroActivo) ? (filtro as FiltroActivo) : "todas";

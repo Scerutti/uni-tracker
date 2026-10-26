@@ -1,7 +1,7 @@
 "use client";
 
 import { useMateria } from "@/hooks/use-materia";
-import { llevaNota } from "@/lib/carrera-utils";
+import { llevaNota, tieneCorrelativas } from "@/lib/carrera-utils";
 import { ESTADO_CONFIG, TIPO_LABEL } from "@/lib/estado-config";
 import type { Materia } from "@/lib/types";
 import { cn } from "@/lib/utils";
@@ -64,7 +64,7 @@ export function MateriaRow({ materia, onScrollToMateria }: MateriaRowProps) {
 
       {/* Correlativas */}
       <TableCell>
-        {materia.correlativas.length > 0 ? (
+        {tieneCorrelativas(materia) ? (
           <Correlativas
             materia={materia}
             progreso={progreso}

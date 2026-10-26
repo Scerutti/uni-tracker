@@ -6,16 +6,10 @@ import { useCarrera } from "@/components/carrera-provider";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { GraduationModal } from "@/components/graduation-modal";
-import {
-  BookOpen,
-  CheckCircle2,
-  Clock,
-  GraduationCap,
-  Target,
-  FileCheck,
-  TrendingUp,
-  PlayCircle,
-} from "lucide-react";
+import { ESTADO_CONFIG } from "@/lib/estado-config";
+import type { EstadoMateria } from "@/lib/types";
+import { cn } from "@/lib/utils";
+import { BookOpen, GraduationCap, Target, FileCheck, TrendingUp } from "lucide-react";
 
 const formatoHoras = new Intl.NumberFormat("es-AR");
 
@@ -83,47 +77,26 @@ export function Dashboard() {
 
       {/* Stats grid */}
       <div className="grid grid-cols-2 gap-3 lg:grid-cols-6">
-        <StatCard
-          icon={<CheckCircle2 className="size-4" />}
-          label="Aprobadas"
-          value={stats.aprobadas}
-          color="text-emerald-600 dark:text-emerald-400"
-          bg="bg-emerald-50 dark:bg-emerald-950/40"
-        />
-        <StatCard
-          icon={<Clock className="size-4" />}
-          label="Regulares"
-          value={stats.regulares}
-          color="text-amber-600 dark:text-amber-400"
-          bg="bg-amber-50 dark:bg-amber-950/40"
-        />
-        <StatCard
-          icon={<PlayCircle className="size-4" />}
-          label="En curso"
-          value={stats.enCurso}
-          color="text-sky-600 dark:text-sky-400"
-          bg="bg-sky-50 dark:bg-sky-950/40"
-        />
+        <EstadoStatCard estado="APROBADA" label="Aprobadas" value={stats.aprobadas} />
+        <EstadoStatCard estado="REGULAR" label="Regulares" value={stats.regulares} />
+        <EstadoStatCard estado="EN_CURSO" label="En curso" value={stats.enCurso} />
         <StatCard
           icon={<BookOpen className="size-4" />}
           label="Pendientes"
           value={stats.pendientes}
-          color="text-muted-foreground"
-          bg="bg-muted"
+          iconClassName="bg-muted text-muted-foreground"
         />
         <StatCard
           icon={<Target className="size-4" />}
           label="Habilitadas cursar"
           value={stats.habilitadasCursar}
-          color="text-teal-600 dark:text-teal-400"
-          bg="bg-teal-50 dark:bg-teal-950/40"
+          iconClassName="bg-teal-50 text-teal-600 dark:bg-teal-950/40 dark:text-teal-400"
         />
         <StatCard
           icon={<FileCheck className="size-4" />}
           label="Habilitadas rendir"
           value={stats.habilitadasRendir}
-          color="text-indigo-600 dark:text-indigo-400"
-          bg="bg-indigo-50 dark:bg-indigo-950/40"
+          iconClassName="bg-indigo-50 text-indigo-600 dark:bg-indigo-950/40 dark:text-indigo-400"
         />
       </div>
       <GraduationModal carrera={carrera.nombre} frase={celebracion} onClose={cerrarCelebracion} />
@@ -131,23 +104,29 @@ export function Dashboard() {
   );
 }
 
+/**
+ * Tarjeta de un estado de materia, con el ícono y los colores de `ESTADO_CONFIG`.
+ */
+function EstadoStatCard({ estado, label, value }: { estado: EstadoMateria; label: string; value: number }) {
+  const { icono: Icono, chip } = ESTADO_CONFIG[estado];
+  return <StatCard icon={<Icono className="size-4" />} label={label} value={value} iconClassName={chip} />;
+}
+
 function StatCard({
   icon,
   label,
   value,
-  color,
-  bg,
+  iconClassName,
 }: {
   icon: React.ReactNode;
   label: string;
   value: number;
-  color: string;
-  bg: string;
+  iconClassName: string;
 }) {
   return (
     <Card className="gap-3 py-4 border-none shadow-none">
       <CardContent className="flex items-center gap-3 px-4">
-        <div className={`flex items-center justify-center rounded-lg p-2 ${bg} ${color}`}>
+        <div className={cn("flex items-center justify-center rounded-lg p-2", iconClassName)}>
           {icon}
         </div>
         <div className="flex flex-col">

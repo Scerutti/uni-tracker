@@ -4,7 +4,8 @@ import { useCallback, useRef } from "react";
 import { useProgreso, useProgresoStore } from "@/lib/store";
 import { crearArchivoProgreso, leerArchivoProgreso, nombreArchivoProgreso } from "@/lib/progreso-io";
 import { useCarrera } from "@/components/carrera-provider";
-import type { FiltroActivo } from "@/lib/types";
+import { type FiltroActivo, FILTROS } from "@/lib/types";
+import { FILTRO_LABEL } from "@/lib/estado-config";
 import { Button } from "@/components/ui/button";
 import {
   Select,
@@ -105,21 +106,25 @@ export function Toolbar() {
   return (
     <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
       <div className="flex items-center gap-2">
-        <label className="text-sm font-medium text-muted-foreground whitespace-nowrap">
+        <label
+          htmlFor="filtro-materias"
+          className="text-sm font-medium text-muted-foreground whitespace-nowrap"
+        >
           Filtrar:
         </label>
         <Select
           value={filtro}
           onValueChange={(v) => setFiltro(v as FiltroActivo)}
         >
-          <SelectTrigger className="h-9 w-48" size="sm">
+          <SelectTrigger id="filtro-materias" className="h-9 w-56" size="sm">
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="todas">Todas las materias</SelectItem>
-            <SelectItem value="aprobadas">Solo aprobadas</SelectItem>
-            <SelectItem value="habilitadas">Solo habilitadas</SelectItem>
-            <SelectItem value="pendientes">Solo pendientes</SelectItem>
+            {FILTROS.map((f) => (
+              <SelectItem key={f} value={f}>
+                {FILTRO_LABEL[f]}
+              </SelectItem>
+            ))}
           </SelectContent>
         </Select>
       </div>

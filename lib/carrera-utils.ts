@@ -54,17 +54,25 @@ export function getCodigosParaRendir(carrera: Carrera, materia: Materia): string
 }
 
 /**
- * Un requisito está cumplido para cursar si todas sus materias están REGULAR o APROBADA.
+ * Un requisito está cumplido si todas sus materias están REGULAR o APROBADA (para cursar)
+ * o APROBADA (para rendir).
  */
 export function requisitoCumplido(
   carrera: Carrera,
   materia: Materia,
   requisito: Requisito,
-  progreso: ProgresoMap
+  progreso: ProgresoMap,
+  para: "cursar" | "rendir" = "cursar"
 ): boolean {
-  return expandirRequisitos(carrera, materia, [requisito]).every((c) =>
-    cumpleParaCursar(getEstado(c, progreso))
-  );
+  const cumple = para === "cursar" ? cumpleParaCursar : cumpleParaRendir;
+  return expandirRequisitos(carrera, materia, [requisito]).every((c) => cumple(getEstado(c, progreso)));
+}
+
+/**
+ * Indica si la materia tiene correlativas para cursar o para rendir.
+ */
+export function tieneCorrelativas(materia: Materia): boolean {
+  return materia.correlativas.length > 0 || (materia.correlativasRendir?.length ?? 0) > 0;
 }
 
 function cumpleCorrelativasCursar(carrera: Carrera, materia: Materia, progreso: ProgresoMap): boolean {

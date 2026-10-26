@@ -1,6 +1,6 @@
 import type { ComponentType } from "react";
 import { CheckCircle2, Clock, Lock, PlayCircle } from "lucide-react";
-import type { EstadoMateria, TipoMateria } from "./types";
+import type { EstadoMateria, FiltroActivo, TipoMateria } from "./types";
 
 interface EstadoConfig {
   label: string;
@@ -10,8 +10,6 @@ interface EstadoConfig {
   chip: string;
   icono: ComponentType<{ className?: string }>;
 }
-
-export const ESTADOS: EstadoMateria[] = ["NO_CURSADA", "EN_CURSO", "REGULAR", "APROBADA"];
 
 export const ESTADO_CONFIG: Record<EstadoMateria, EstadoConfig> = {
   NO_CURSADA: {
@@ -44,4 +42,12 @@ export const TIPO_LABEL: Record<TipoMateria, string> = {
   Anual: "Anual",
   "Cuatrim C1": "C1",
   "Cuatrim C2": "C2",
+};
+
+export const FILTRO_LABEL: Record<FiltroActivo, string> = {
+  todas: "Todas las materias",
+  aprobadas: "Solo aprobadas",
+  habilitadas: "Habilitadas para cursar",
+  rendir: "Habilitadas para rendir",
+  pendientes: "Solo pendientes",
 };
