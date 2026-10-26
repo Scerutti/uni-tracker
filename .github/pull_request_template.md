@@ -24,7 +24,7 @@ Cierra #
 ## Release
 
 - [ ] No cambia la versión.
-- [ ] Sube la versión a **x.y.z**: `package.json`, `package-lock.json` y `CHANGELOG.md` (la versión se ve en el footer).
+- [ ] Sube la versión a **x.y.z**: `package.json`, `package-lock.json`, `CHANGELOG.md` y el resumen corto en `lib/novedades.ts` (lo que se ve al tocar la versión en el footer).
 
 ## Verificación
 
