@@ -1,0 +1,27 @@
+# Revisa tipos y lint antes de que Vercel publique main.
+# El build lo sigue haciendo Vercel.
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+# Sólo lee el código: el GITHUB_TOKEN no necesita más.
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      # next-env.d.ts no está en git: typegen lo genera junto con los tipos de las rutas, sin hacer el build.
+      - run: npx next typegen
+      - run: npm run typecheck
+      - run: npm run lint
