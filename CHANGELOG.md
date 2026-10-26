@@ -4,6 +4,12 @@ Los cambios de cada versión de uni-tracker. La versión que se ve en el footer 
 
 El formato sigue [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/) y las versiones siguen [SemVer](https://semver.org/lang/es/).
 
+## [1.0.1] - 2026-10-26
+
+### Cambiado
+
+- Dependencias al día: TypeScript 5.9, PostCSS 8.5.31 y @vercel/analytics 2. (#17, #18)
+
 ## [1.0.0] - 2026-10-26
 
 Primera versión estable: la app está en uso, soporta varias carreras y el progreso guardado tiene migraciones.

@@ -12,6 +12,11 @@ export interface Novedad {
  */
 export const NOVEDADES: Novedad[] = [
   {
+    version: "1.0.1",
+    fecha: "2026-10-26",
+    cambios: ["Mejoras internas para que la app siga andando al día."],
+  },
+  {
     version: "1.0.0",
     fecha: "2026-10-26",
     cambios: [
