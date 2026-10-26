@@ -4,9 +4,7 @@ Los cambios de cada versión de uni-tracker. La versión que se ve en el footer 
 
 El formato sigue [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/) y las versiones siguen [SemVer](https://semver.org/lang/es/).
 
-## [1.0.0] - sin publicar
-
-<!-- Al hacer el release a main, cambiar "sin publicar" por la fecha real. -->
+## [1.0.0] - 2026-10-26
 
 Primera versión estable: la app está en uso, soporta varias carreras y el progreso guardado tiene migraciones.
 
@@ -18,7 +16,7 @@ Primera versión estable: la app está en uso, soporta varias carreras y el prog
 - Página 404 propia. (#14)
 - Filtro "Habilitadas para rendir".
 - Las materias con correlativas distintas para rendir el final muestran las dos listas (Cursar / Rendir).
-- Versión de la app en el footer, enlazada a este changelog.
+- Versión de la app en el footer: al tocarla se abre un resumen corto de las novedades.
 
 ### Cambiado
 
