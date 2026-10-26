@@ -1,6 +1,9 @@
 export type TipoMateria = "Anual" | "Cuatrim C1" | "Cuatrim C2";
 
-export type EstadoMateria = "NO_CURSADA" | "EN_CURSO" | "REGULAR" | "APROBADA";
+/** Estados de una materia, en el orden en que se avanza. */
+export const ESTADOS = ["NO_CURSADA", "EN_CURSO", "REGULAR", "APROBADA"] as const;
+
+export type EstadoMateria = (typeof ESTADOS)[number];
 
 /**
  * Requisito de correlatividad: el código de una materia puntual
@@ -26,9 +29,28 @@ export interface AnioData {
   materias: Materia[];
 }
 
-export interface Carrera {
+export interface Universidad {
   id: string;
   nombre: string;
+  sigla: string;
+  /** Ruta del logo dentro de `public/`. */
+  logo: string;
+}
+
+export interface Carrera {
+  /**
+   * Identificador permanente: es la URL (`/carrera/<id>`) y la clave del progreso
+   * guardado y de los archivos exportados. No se cambia una vez publicada.
+   */
+  id: string;
+  nombre: string;
+  /** Nombre para el header, por ejemplo "Lic. en Sistemas". */
+  nombreCorto: string;
+  universidad: Universidad;
+  /** Nota mínima para aprobar un final. */
+  notaMinima: number;
+  /** Texto de los chips de correlativas. Si se omite, se muestra el código completo. */
+  abreviarCodigo?: (codigo: string) => string;
   plan: AnioData[];
 }
 
@@ -39,4 +61,7 @@ export interface ProgresoMateria {
 
 export type ProgresoMap = Record<string, ProgresoMateria>;
 
-export type FiltroActivo = "todas" | "aprobadas" | "habilitadas" | "pendientes";
+/** Filtros de la lista de materias. */
+export const FILTROS = ["todas", "aprobadas", "habilitadas", "rendir", "pendientes"] as const;
+
+export type FiltroActivo = (typeof FILTROS)[number];

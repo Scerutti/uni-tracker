@@ -2,64 +2,69 @@
 
 import { useCallback, type ChangeEvent } from "react";
 import { toast } from "sonner";
-import { useCarreraStore } from "@/lib/store";
+import { useProgreso, useProgresoStore } from "@/lib/store";
 import {
+  esNotaValida,
   getCorrelativasIncumplidas,
   getEstado,
   getMateriasHabilitadasParaCursar,
   getNota,
   puedeInteractuar,
 } from "@/lib/carrera-utils";
-import type { EstadoMateria, Materia, ProgresoMap } from "@/lib/types";
+import { useCarrera } from "@/components/carrera-provider";
+import type { Carrera, EstadoMateria, Materia } from "@/lib/types";
 
-function codigosHabilitados(progreso: ProgresoMap) {
-  return new Set(getMateriasHabilitadasParaCursar(progreso).map((m) => m.codigo));
+function codigosHabilitados(carrera: Carrera) {
+  const progreso = useProgresoStore.getState().progresos[carrera.id] ?? {};
+  return new Set(getMateriasHabilitadasParaCursar(carrera, progreso).map((m) => m.codigo));
 }
 
 /**
  * Estado y handlers de una materia, compartidos por la fila (desktop) y la tarjeta (mobile).
  */
 export function useMateria(materia: Materia) {
-  const progreso = useCarreraStore((s) => s.progreso);
-  const setEstado = useCarreraStore((s) => s.setEstado);
-  const setNota = useCarreraStore((s) => s.setNota);
+  const carrera = useCarrera();
+  const progreso = useProgreso(carrera.id);
+  const setEstado = useProgresoStore((s) => s.setEstado);
+  const setNota = useProgresoStore((s) => s.setNota);
 
   const estado = getEstado(materia.codigo, progreso);
   const nota = getNota(materia.codigo, progreso);
-  const habilitada = puedeInteractuar(materia, progreso);
-  const incumplidas = getCorrelativasIncumplidas(materia, progreso);
+  const habilitada = puedeInteractuar(carrera, materia, progreso);
+  const incumplidas = getCorrelativasIncumplidas(carrera, materia, progreso);
 
   const handleEstadoChange = useCallback(
     (value: string) => {
-      const antes = codigosHabilitados(useCarreraStore.getState().progreso);
-      setEstado(materia.codigo, value as EstadoMateria);
-      const nuevas = getMateriasHabilitadasParaCursar(useCarreraStore.getState().progreso).filter(
-        (m) => !antes.has(m.codigo)
-      );
+      const antes = codigosHabilitados(carrera);
+      setEstado(carrera, materia.codigo, value as EstadoMateria);
+      const despues = useProgresoStore.getState().progresos[carrera.id] ?? {};
+      const nuevas = getMateriasHabilitadasParaCursar(carrera, despues).filter((m) => !antes.has(m.codigo));
 
       if (nuevas.length > 0) {
         toast.success(
-          nuevas.length === 1 ? "Se habilitó una materia para cursar" : `Se habilitaron ${nuevas.length} materias para cursar`,
+          nuevas.length === 1
+            ? "Se habilitó una materia para cursar"
+            : `Se habilitaron ${nuevas.length} materias para cursar`,
           { description: nuevas.map((m) => m.nombre).join(", ") }
         );
       }
     },
-    [materia.codigo, setEstado]
+    [carrera, materia.codigo, setEstado]
   );
 
   const handleNotaChange = useCallback(
     (e: ChangeEvent<HTMLInputElement>) => {
       const val = e.target.value;
       if (val === "") {
-        setNota(materia.codigo, null);
+        setNota(carrera.id, materia.codigo, null);
       } else {
         const num = parseFloat(val);
-        if (!isNaN(num) && num >= 0 && num <= 10) {
-          setNota(materia.codigo, num);
+        if (esNotaValida(num)) {
+          setNota(carrera.id, materia.codigo, num);
         }
       }
     },
-    [materia.codigo, setNota]
+    [carrera.id, materia.codigo, setNota]
   );
 
   return {

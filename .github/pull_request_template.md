@@ -24,12 +24,13 @@ Cierra #
 ## Release
 
 - [ ] No cambia la versión.
-- [ ] Sube la versión a **x.y.z**: `package.json` y `package-lock.json`.
+- [ ] Sube la versión a **x.y.z**: `package.json`, `package-lock.json`, `CHANGELOG.md` y el resumen corto en `lib/novedades.ts` (lo que se ve al tocar la versión en el footer).
 
 ## Verificación
 
 - [ ] `npm run typecheck` pasa.
-- [ ] `npm run lint` pasa.
+- [ ] `npm run lint` y `npm run format:check` pasan.
+- [ ] `npm test` pasa. Tests nuevos o cambiados: <!-- archivos, o "ninguno" -->
 - [ ] Probé la UI en el navegador (celular y escritorio, si aplica).
 
 **Para probar:**

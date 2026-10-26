@@ -9,6 +9,14 @@ Aplicación web para **llevar el seguimiento del plan de estudios** de una carre
 - Entender dependencias/correlatividades para planificar cursadas.
 - Tener un “tablero” rápido del avance general.
 
+## Capturas
+
+<p>
+  <img src="docs/screenshots/inicio.jpg" alt="Inicio: carreras agrupadas por universidad" width="32%" />
+  <img src="docs/screenshots/avance.jpg" alt="Avance de la carrera, promedio y materias habilitadas" width="32%" />
+  <img src="docs/screenshots/correlativas-rendir.jpg" alt="Correlativas para cursar y para rendir" width="32%" />
+</p>
+
 ## Stack / Tecnologías
 
 - **Next.js** (App Router)
@@ -20,12 +28,13 @@ Aplicación web para **llevar el seguimiento del plan de estudios** de una carre
 
 ## Requisitos
 
-- **Node.js 20+** (recomendado: 20.9 o superior)
+- **Node.js 22.12+ o 24** (lo pide Vitest; la CI usa 24)
 - Un gestor de paquetes: `npm` o `pnpm`
 
 ## Instalación
 
 Con **npm**:
+
 ```bash
 npm install
 npm run dev
@@ -40,16 +49,39 @@ Luego abrí: http://localhost:3000
 - `start`: ejecuta el build en modo producción
 - `lint`: corre el linter (ESLint)
 - `typecheck`: verifica los tipos de TypeScript
+- `test`: corre los tests (Vitest), incluida la validación de los planes de estudio
 
 ## Datos
 
 El progreso se guarda en el `localStorage` del navegador. Para pasarlo a otro
 navegador o dispositivo, usá **Exportar JSON** e **Importar JSON**.
 
-El plan de estudios y sus correlatividades están en `lib/plan-data.ts`. Una
-correlativa puede ser el código de una materia o un año completo (`{ anio: 2 }`),
-y una materia puede tener correlativas distintas para rendir el final
-(`correlativasRendir`).
+Cada carrera guarda su progreso por separado, así que se puede llevar más de una
+en el mismo navegador.
+
+## Agregar una carrera
+
+Cada carrera es un archivo en `lib/carreras/`, por ejemplo
+`lib/carreras/lic-sistemas.ts`.
+
+1. Si la universidad no existe, agregala en `lib/universidades.ts` y poné su
+   logo en `public/images/`.
+2. Creá `lib/carreras/<id>.ts` con un `Carrera`:
+   - `id`: el slug de la URL (`/carrera/<id>`). Es permanente: el progreso
+     guardado y los archivos exportados lo usan, así que no se cambia una vez
+     publicado.
+   - `nombre`, `nombreCorto` (para el header), `universidad` y `notaMinima`
+     (nota mínima para aprobar un final).
+   - `abreviarCodigo` (opcional): cómo se muestra un código en los chips de
+     correlativas. Si se omite, se muestra el código completo.
+   - `plan`: los años con sus materias. Una correlativa puede ser el código de
+     una materia o un año completo (`{ anio: 2 }`). Una materia puede tener
+     correlativas distintas para rendir el final (`correlativasRendir`).
+3. Sumala a `CARRERAS` en `lib/carreras/index.ts`.
+4. Corré `npm test`: valida todas las carreras (códigos repetidos,
+   correlativas que no existen, de años posteriores o circulares).
+
+Si no querés armarla vos, pedila desde la home de la app (por mail) o con el template de issue **Nueva carrera**.
 
 ## Contribuir
 
@@ -59,6 +91,7 @@ Las contribuciones son bienvenidas.
 - Si querés implementar algo: **abrí un Pull Request (PR)**.
 
 Sugerencia para PR's:
+
 1. Fork del repo
 2. Crear una rama (`feat/...` o `fix/...`)
 3. Cambios con una descripción clara
@@ -69,4 +102,5 @@ Sugerencia para PR's:
 Si necesitás ayuda o querés discutir una idea, **abrí una Issue** y lo vemos ahí.
 
 ---
+
 Hecho con Next.js + TypeScript.

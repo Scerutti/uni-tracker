@@ -1,4 +1,10 @@
 import { Mail } from "lucide-react";
+import packageJson from "@/package.json";
+import { CONTACTO_EMAIL } from "@/lib/links";
+import { VersionNovedades } from "@/components/version-novedades";
+
+/** Versión de la app; sale de `package.json`, que se sube en cada release. */
+const VERSION = packageJson.version;
 
 export function AppFooter() {
   const currentYear = new Date().getFullYear();
@@ -20,7 +26,7 @@ export function AppFooter() {
 
         <div className="flex items-center gap-4">
           <a
-            href="mailto:softsys95@gmail.com"
+            href={`mailto:${CONTACTO_EMAIL}`}
             className="inline-flex items-center gap-1.5 transition-colors hover:text-foreground"
           >
             <Mail className="size-3.5" />
@@ -28,6 +34,8 @@ export function AppFooter() {
           </a>
           <span className="text-border">|</span>
           <span>{currentYear}</span>
+          <span className="text-border">|</span>
+          <VersionNovedades version={VERSION} />
         </div>
       </div>
     </footer>
