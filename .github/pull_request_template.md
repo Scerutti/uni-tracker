@@ -30,6 +30,7 @@ Cierra #
 
 - [ ] `npm run typecheck` pasa.
 - [ ] `npm run lint` pasa.
+- [ ] `npm test` pasa. Tests nuevos o cambiados: <!-- archivos, o "ninguno" -->
 - [ ] Probé la UI en el navegador (celular y escritorio, si aplica).
 
 **Para probar:**

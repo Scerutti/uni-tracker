@@ -26,9 +26,28 @@ export interface AnioData {
   materias: Materia[];
 }
 
-export interface Carrera {
+export interface Universidad {
   id: string;
   nombre: string;
+  sigla: string;
+  /** Ruta del logo dentro de `public/`. */
+  logo: string;
+}
+
+export interface Carrera {
+  /**
+   * Identificador permanente: es la URL (`/carrera/<id>`) y la clave del progreso
+   * guardado y de los archivos exportados. No se cambia una vez publicada.
+   */
+  id: string;
+  nombre: string;
+  /** Nombre para el header, por ejemplo "Lic. en Sistemas". */
+  nombreCorto: string;
+  universidad: Universidad;
+  /** Nota mínima para aprobar un final. */
+  notaMinima: number;
+  /** Texto de los chips de correlativas. Si se omite, se muestra el código completo. */
+  abreviarCodigo?: (codigo: string) => string;
   plan: AnioData[];
 }
 

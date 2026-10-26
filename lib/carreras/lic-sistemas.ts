@@ -1,6 +1,7 @@
-import type { AnioData, Carrera, Materia } from "./types";
+import type { AnioData, Carrera } from "../types";
+import { UADER } from "../universidades";
 
-export const planDeEstudios: AnioData[] = [
+const plan: AnioData[] = [
   {
     anio: 1,
     materias: [
@@ -63,27 +64,12 @@ export const planDeEstudios: AnioData[] = [
   },
 ];
 
-export const carrera: Carrera = {
+export const licSistemas: Carrera = {
   id: "lic-sistemas",
   nombre: "Licenciatura en Sistemas de Información y Tecnologías de la Información",
-  plan: planDeEstudios,
+  nombreCorto: "Lic. en Sistemas",
+  universidad: UADER,
+  notaMinima: 4,
+  abreviarCodigo: (codigo) => codigo.slice(-3),
+  plan,
 };
-
-const todasLasMaterias: Materia[] = planDeEstudios.flatMap((a) => a.materias);
-const materiasPorCodigo = new Map(todasLasMaterias.map((m) => [m.codigo, m]));
-
-export function getAllMaterias() {
-  return todasLasMaterias;
-}
-
-export function getMateriaByCode(codigo: string) {
-  return materiasPorCodigo.get(codigo);
-}
-
-export function getMateriasDeAnio(anio: number) {
-  return planDeEstudios.find((a) => a.anio === anio)?.materias ?? [];
-}
-
-export function getAnioDeMateria(codigo: string) {
-  return planDeEstudios.find((a) => a.materias.some((m) => m.codigo === codigo))?.anio;
-}

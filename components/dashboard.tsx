@@ -1,7 +1,8 @@
 "use client";
 
-import { useCarreraStore } from "@/lib/store";
+import { useProgreso, useProgresoStore } from "@/lib/store";
 import { calcularEstadisticas, calcularPromedio } from "@/lib/carrera-utils";
+import { useCarrera } from "@/components/carrera-provider";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { GraduationModal } from "@/components/graduation-modal";
@@ -19,11 +20,12 @@ import {
 const formatoHoras = new Intl.NumberFormat("es-AR");
 
 export function Dashboard() {
-  const progreso = useCarreraStore((s) => s.progreso);
-  const celebracion = useCarreraStore((s) => s.celebracion);
-  const cerrarCelebracion = useCarreraStore((s) => s.cerrarCelebracion);
-  const stats = calcularEstadisticas(progreso);
-  const promedio = calcularPromedio(progreso);
+  const carrera = useCarrera();
+  const progreso = useProgreso(carrera.id);
+  const celebracion = useProgresoStore((s) => s.celebracion);
+  const cerrarCelebracion = useProgresoStore((s) => s.cerrarCelebracion);
+  const stats = calcularEstadisticas(carrera, progreso);
+  const promedio = calcularPromedio(carrera, progreso);
 
   return (
     <div className="flex flex-col gap-4">
@@ -124,7 +126,7 @@ export function Dashboard() {
           bg="bg-indigo-50 dark:bg-indigo-950/40"
         />
       </div>
-      <GraduationModal frase={celebracion} onClose={cerrarCelebracion} />
+      <GraduationModal carrera={carrera.nombre} frase={celebracion} onClose={cerrarCelebracion} />
     </div>
   );
 }
