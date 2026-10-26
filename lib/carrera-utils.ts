@@ -4,8 +4,7 @@ import { getAllMaterias, getMateriasDeAnio } from "./plan";
 /** Nota máxima de la escala. */
 export const NOTA_MAXIMA = 10;
 
-const cumpleParaCursar = (estado: EstadoMateria) =>
-  estado === "REGULAR" || estado === "APROBADA";
+const cumpleParaCursar = (estado: EstadoMateria) => estado === "REGULAR" || estado === "APROBADA";
 
 const cumpleParaRendir = (estado: EstadoMateria) => estado === "APROBADA";
 
@@ -88,10 +87,7 @@ function cumpleCorrelativasRendir(carrera: Carrera, materia: Materia, progreso: 
  * sus correlativas están REGULAR o APROBADA.
  */
 export function estaHabilitadaParaCursar(carrera: Carrera, materia: Materia, progreso: ProgresoMap): boolean {
-  return (
-    getEstado(materia.codigo, progreso) === "NO_CURSADA" &&
-    cumpleCorrelativasCursar(carrera, materia, progreso)
-  );
+  return getEstado(materia.codigo, progreso) === "NO_CURSADA" && cumpleCorrelativasCursar(carrera, materia, progreso);
 }
 
 /**
@@ -99,20 +95,14 @@ export function estaHabilitadaParaCursar(carrera: Carrera, materia: Materia, pro
  * sus correlativas de final están APROBADA.
  */
 export function estaHabilitadaParaRendir(carrera: Carrera, materia: Materia, progreso: ProgresoMap): boolean {
-  return (
-    getEstado(materia.codigo, progreso) === "REGULAR" &&
-    cumpleCorrelativasRendir(carrera, materia, progreso)
-  );
+  return getEstado(materia.codigo, progreso) === "REGULAR" && cumpleCorrelativasRendir(carrera, materia, progreso);
 }
 
 /**
  * Una materia se puede editar si ya tiene progreso o si cumple las correlativas para cursar.
  */
 export function puedeInteractuar(carrera: Carrera, materia: Materia, progreso: ProgresoMap): boolean {
-  return (
-    getEstado(materia.codigo, progreso) !== "NO_CURSADA" ||
-    cumpleCorrelativasCursar(carrera, materia, progreso)
-  );
+  return getEstado(materia.codigo, progreso) !== "NO_CURSADA" || cumpleCorrelativasCursar(carrera, materia, progreso);
 }
 
 /**

@@ -34,17 +34,15 @@ export function Dashboard() {
           </CardHeader>
           <CardContent className="flex flex-col gap-3">
             <div className="flex items-end justify-between">
-              <span className="text-4xl font-bold tabular-nums text-primary">
-                {stats.porcentaje}%
-              </span>
+              <span className="text-4xl font-bold tabular-nums text-primary">{stats.porcentaje}%</span>
               <span className="text-sm text-muted-foreground">
                 {stats.aprobadas} de {stats.total} materias aprobadas
               </span>
             </div>
             <Progress value={stats.porcentaje} className="h-3" />
             <span className="text-xs text-muted-foreground tabular-nums">
-              {formatoHoras.format(stats.horasAprobadas)} de{" "}
-              {formatoHoras.format(stats.horasTotales)} hs aprobadas ({stats.porcentajeHoras}%)
+              {formatoHoras.format(stats.horasAprobadas)} de {formatoHoras.format(stats.horasTotales)} hs aprobadas (
+              {stats.porcentajeHoras}%)
             </span>
           </CardContent>
         </Card>
@@ -59,12 +57,8 @@ export function Dashboard() {
           <CardContent className="flex flex-col gap-1">
             {promedio !== null ? (
               <>
-                <span className="text-4xl font-bold tabular-nums text-primary">
-                  {promedio.toFixed(2)}
-                </span>
-                <span className="text-sm text-muted-foreground">
-                  de finales aprobados
-                </span>
+                <span className="text-4xl font-bold tabular-nums text-primary">{promedio.toFixed(2)}</span>
+                <span className="text-sm text-muted-foreground">de finales aprobados</span>
               </>
             ) : (
               <span className="text-sm text-muted-foreground pt-2">
@@ -126,9 +120,7 @@ function StatCard({
   return (
     <Card className="gap-3 py-4 border-none shadow-none">
       <CardContent className="flex items-center gap-3 px-4">
-        <div className={cn("flex items-center justify-center rounded-lg p-2", iconClassName)}>
-          {icon}
-        </div>
+        <div className={cn("flex items-center justify-center rounded-lg p-2", iconClassName)}>{icon}</div>
         <div className="flex flex-col">
           <span className="text-2xl font-bold tabular-nums">{value}</span>
           <span className="text-xs text-muted-foreground">{label}</span>

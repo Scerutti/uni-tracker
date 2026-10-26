@@ -6,8 +6,7 @@ import { ThemeToggle } from "@/components/theme-toggle";
 import { AppFooter } from "@/components/app-footer";
 import { getCarrerasPorUniversidad } from "@/lib/carreras";
 
-const PEDIR_CARRERA_URL =
-  "https://github.com/Scerutti/uni-tracker/issues/new?template=nueva-carrera.yml";
+const PEDIR_CARRERA_URL = "https://github.com/Scerutti/uni-tracker/issues/new?template=nueva-carrera.yml";
 
 export default function HomePage() {
   const universidades = getCarrerasPorUniversidad();
@@ -24,9 +23,7 @@ export default function HomePage() {
             <h1 className="text-balance text-2xl font-bold tracking-tight sm:text-3xl">
               Seguimiento de Plan de Carrera
             </h1>
-            <p className="text-sm text-muted-foreground">
-              Seleccioná tu carrera para comenzar a registrar tu avance.
-            </p>
+            <p className="text-sm text-muted-foreground">Seleccioná tu carrera para comenzar a registrar tu avance.</p>
           </div>
 
           {universidades.map(({ universidad, carreras }) => (
@@ -41,9 +38,7 @@ export default function HomePage() {
                     priority
                   />
                 </div>
-                <h2 className="text-pretty text-base font-medium text-muted-foreground">
-                  {universidad.nombre}
-                </h2>
+                <h2 className="text-pretty text-base font-medium text-muted-foreground">{universidad.nombre}</h2>
               </div>
 
               <div className="flex w-full flex-col gap-3">

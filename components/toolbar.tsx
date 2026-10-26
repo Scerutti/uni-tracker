@@ -7,13 +7,7 @@ import { useCarrera } from "@/components/carrera-provider";
 import { type FiltroActivo, FILTROS } from "@/lib/types";
 import { FILTRO_LABEL } from "@/lib/estado-config";
 import { Button } from "@/components/ui/button";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -49,10 +43,7 @@ export function Toolbar() {
 
     const count = Object.keys(progreso).length;
     toast.success("Progreso exportado", {
-      description:
-        count === 1
-          ? "Se exportó 1 materia con progreso."
-          : `Se exportaron ${count} materias con progreso.`,
+      description: count === 1 ? "Se exportó 1 materia con progreso." : `Se exportaron ${count} materias con progreso.`,
     });
   }, [carrera, progreso]);
 
@@ -74,19 +65,13 @@ export function Toolbar() {
 
           importarProgreso(carrera, resultado.progreso);
 
-          const count = Object.values(resultado.progreso).filter(
-            (v) => v.estado !== "NO_CURSADA"
-          ).length;
+          const count = Object.values(resultado.progreso).filter((v) => v.estado !== "NO_CURSADA").length;
           toast.success("Progreso importado", {
-            description:
-              count === 1
-                ? "Se cargó 1 materia con avance."
-                : `Se cargaron ${count} materias con avance.`,
+            description: count === 1 ? "Se cargó 1 materia con avance." : `Se cargaron ${count} materias con avance.`,
           });
         } catch {
           toast.error("Error al importar", {
-            description:
-              "No se pudo leer el archivo. Verificá que sea un JSON válido.",
+            description: "No se pudo leer el archivo. Verificá que sea un JSON válido.",
           });
         }
       };
@@ -106,16 +91,10 @@ export function Toolbar() {
   return (
     <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
       <div className="flex items-center gap-2">
-        <label
-          htmlFor="filtro-materias"
-          className="text-sm font-medium text-muted-foreground whitespace-nowrap"
-        >
+        <label htmlFor="filtro-materias" className="text-sm font-medium text-muted-foreground whitespace-nowrap">
           Filtrar:
         </label>
-        <Select
-          value={filtro}
-          onValueChange={(v) => setFiltro(v as FiltroActivo)}
-        >
+        <Select value={filtro} onValueChange={(v) => setFiltro(v as FiltroActivo)}>
           <SelectTrigger id="filtro-materias" className="h-9 w-56" size="sm">
             <SelectValue />
           </SelectTrigger>
@@ -135,11 +114,7 @@ export function Toolbar() {
           <span className="hidden sm:inline">Exportar JSON</span>
         </Button>
 
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => fileInputRef.current?.click()}
-        >
+        <Button variant="outline" size="sm" onClick={() => fileInputRef.current?.click()}>
           <Upload className="size-4" />
           <span className="hidden sm:inline">Importar JSON</span>
         </Button>
@@ -154,11 +129,7 @@ export function Toolbar() {
 
         <AlertDialog>
           <AlertDialogTrigger asChild>
-            <Button
-              variant="outline"
-              size="sm"
-              className="text-destructive hover:text-destructive"
-            >
+            <Button variant="outline" size="sm" className="text-destructive hover:text-destructive">
               <RotateCcw className="size-4" />
               <span className="hidden sm:inline">Reiniciar</span>
             </Button>
@@ -167,15 +138,13 @@ export function Toolbar() {
             <AlertDialogHeader>
               <AlertDialogTitle>Reiniciar progreso</AlertDialogTitle>
               <AlertDialogDescription>
-                Esto eliminará tu progreso guardado en {carrera.nombreCorto}. Esta
-                acción no se puede deshacer. Te recomendamos exportar tu progreso antes.
+                Esto eliminará tu progreso guardado en {carrera.nombreCorto}. Esta acción no se puede deshacer. Te
+                recomendamos exportar tu progreso antes.
               </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>
               <AlertDialogCancel>Cancelar</AlertDialogCancel>
-              <AlertDialogAction onClick={handleReset}>
-                Reiniciar
-              </AlertDialogAction>
+              <AlertDialogAction onClick={handleReset}>Reiniciar</AlertDialogAction>
             </AlertDialogFooter>
           </AlertDialogContent>
         </AlertDialog>

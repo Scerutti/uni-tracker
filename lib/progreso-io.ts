@@ -76,19 +76,14 @@ export function nombreArchivoProgreso(carrera: Carrera, fecha = new Date()): str
   return `progreso-${carrera.id}-${fecha.toISOString().slice(0, 10)}.json`;
 }
 
-export type ResultadoLectura =
-  | { ok: true; progreso: ProgresoMap }
-  | { ok: false; error: string };
+export type ResultadoLectura = { ok: true; progreso: ProgresoMap } | { ok: false; error: string };
 
 /**
  * Lee un archivo exportado para importarlo en `carrera`. Acepta el formato actual
  * ({ app, version, carrera, progreso }) y el formato anterior (el mapa de progreso suelto).
  */
 export function leerArchivoProgreso(carrera: Carrera, data: unknown): ResultadoLectura {
-  const esFormatoActual =
-    typeof data === "object" &&
-    data !== null &&
-    (data as Record<string, unknown>).app === APP_ID;
+  const esFormatoActual = typeof data === "object" && data !== null && (data as Record<string, unknown>).app === APP_ID;
 
   if (esFormatoActual) {
     const archivo = data as Partial<ArchivoProgreso>;

@@ -39,9 +39,7 @@ describe("correlativas para cursar", () => {
 
   it("un año completo pide todas sus materias", () => {
     expect(estaHabilitadaParaCursar(carrera, m(carrera, "B2"), progreso({ A1: "REGULAR" }))).toBe(false);
-    expect(
-      estaHabilitadaParaCursar(carrera, m(carrera, "B2"), progreso({ A1: "REGULAR", A2: "APROBADA" }))
-    ).toBe(true);
+    expect(estaHabilitadaParaCursar(carrera, m(carrera, "B2"), progreso({ A1: "REGULAR", A2: "APROBADA" }))).toBe(true);
   });
 
   it("una materia ya cursada no cuenta como habilitada, pero se puede editar", () => {
@@ -59,12 +57,8 @@ describe("correlativas para rendir", () => {
   });
 
   it("si no hay correlativasRendir, pide las de cursar aprobadas", () => {
-    expect(estaHabilitadaParaRendir(carrera, m(carrera, "B1"), progreso({ A1: "REGULAR", B1: "REGULAR" }))).toBe(
-      false
-    );
-    expect(estaHabilitadaParaRendir(carrera, m(carrera, "B1"), progreso({ A1: "APROBADA", B1: "REGULAR" }))).toBe(
-      true
-    );
+    expect(estaHabilitadaParaRendir(carrera, m(carrera, "B1"), progreso({ A1: "REGULAR", B1: "REGULAR" }))).toBe(false);
+    expect(estaHabilitadaParaRendir(carrera, m(carrera, "B1"), progreso({ A1: "APROBADA", B1: "REGULAR" }))).toBe(true);
   });
 });
 
@@ -73,7 +67,15 @@ describe("requisitoCumplido", () => {
     const p = progreso({ A1: "APROBADA", A2: "REGULAR" });
     expect(requisitoCumplido(carrera, m(carrera, "B2"), { anio: 1 }, p)).toBe(true);
     expect(requisitoCumplido(carrera, m(carrera, "B2"), { anio: 1 }, p, "rendir")).toBe(false);
-    expect(requisitoCumplido(carrera, m(carrera, "B2"), { anio: 1 }, { ...p, A2: { estado: "APROBADA", nota: null } }, "rendir")).toBe(true);
+    expect(
+      requisitoCumplido(
+        carrera,
+        m(carrera, "B2"),
+        { anio: 1 },
+        { ...p, A2: { estado: "APROBADA", nota: null } },
+        "rendir"
+      )
+    ).toBe(true);
   });
 
   it("tieneCorrelativas mira las de cursar y las de rendir", () => {

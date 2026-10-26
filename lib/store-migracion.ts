@@ -29,14 +29,11 @@ function aniosValidos(anios: unknown): number[] {
  * - v2: progreso y años desplegados separados por carrera.
  */
 export function migrarEstado(persisted: unknown, version: number): EstadoPersistido {
-  const anterior = (typeof persisted === "object" && persisted !== null ? persisted : {}) as Record<
-    string,
-    unknown
-  >;
+  const anterior = (typeof persisted === "object" && persisted !== null ? persisted : {}) as Record<string, unknown>;
 
   if (version < 2) {
     const carrera = getCarrera(CARRERA_ORIGINAL);
-    const progreso = carrera ? sanitizarProgreso(carrera, anterior.progreso) ?? {} : {};
+    const progreso = carrera ? (sanitizarProgreso(carrera, anterior.progreso) ?? {}) : {};
     return {
       progresos: Object.keys(progreso).length > 0 ? { [CARRERA_ORIGINAL]: progreso } : {},
       aniosExpandidos: { [CARRERA_ORIGINAL]: aniosValidos(anterior.anioExpandido) },

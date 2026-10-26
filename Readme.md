@@ -26,6 +26,7 @@ Aplicación web para **llevar el seguimiento del plan de estudios** de una carre
 ## Instalación
 
 Con **npm**:
+
 ```bash
 npm install
 npm run dev
@@ -82,6 +83,7 @@ Las contribuciones son bienvenidas.
 - Si querés implementar algo: **abrí un Pull Request (PR)**.
 
 Sugerencia para PR's:
+
 1. Fork del repo
 2. Crear una rama (`feat/...` o `fix/...`)
 3. Cambios con una descripción clara
@@ -92,4 +94,5 @@ Sugerencia para PR's:
 Si necesitás ayuda o querés discutir una idea, **abrí una Issue** y lo vemos ahí.
 
 ---
+
 Hecho con Next.js + TypeScript.

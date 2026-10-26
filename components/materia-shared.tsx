@@ -2,37 +2,17 @@
 
 import type { ChangeEvent, ReactNode } from "react";
 import { CheckCircle2, Lock, TriangleAlert } from "lucide-react";
-import {
-  getEstado,
-  NOTA_MAXIMA,
-  notaInvalida,
-  requisitoCumplido,
-  tieneCorrelativas,
-} from "@/lib/carrera-utils";
+import { getEstado, NOTA_MAXIMA, notaInvalida, requisitoCumplido, tieneCorrelativas } from "@/lib/carrera-utils";
 import { ESTADO_CONFIG } from "@/lib/estado-config";
 import { abreviarCodigo, getMateriaByCode } from "@/lib/plan";
-import {
-  type Carrera,
-  type EstadoMateria,
-  type Materia,
-  type ProgresoMap,
-  type Requisito,
-  ESTADOS,
-} from "@/lib/types";
+import { type Carrera, type EstadoMateria, type Materia, type ProgresoMap, type Requisito, ESTADOS } from "@/lib/types";
 import { useCarrera } from "@/components/carrera-provider";
 import { cn } from "@/lib/utils";
 import { Input } from "@/components/ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 
-const CHIP_BASE =
-  "inline-flex items-center gap-1 rounded px-1.5 py-0.5 text-xs font-medium transition-colors";
+const CHIP_BASE = "inline-flex items-center gap-1 rounded px-1.5 py-0.5 text-xs font-medium transition-colors";
 
 export function nombresDeMaterias(carrera: Carrera, codigos: string[]): string {
   return codigos.map((c) => getMateriaByCode(carrera, c)?.nombre ?? c).join(", ");
@@ -114,12 +94,7 @@ function ListaRequisitos({
     <div className="flex flex-wrap gap-1">
       {requisitos.map((r) =>
         typeof r === "string" ? (
-          <ChipMateria
-            key={r}
-            codigo={r}
-            progreso={progreso}
-            onScrollToMateria={onScrollToMateria}
-          />
+          <ChipMateria key={r} codigo={r} progreso={progreso} onScrollToMateria={onScrollToMateria} />
         ) : (
           <ChipAnio key={`anio-${r.anio}`} materia={materia} anio={r.anio} para={para} progreso={progreso} />
         )
