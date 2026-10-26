@@ -9,6 +9,14 @@ Aplicación web para **llevar el seguimiento del plan de estudios** de una carre
 - Entender dependencias/correlatividades para planificar cursadas.
 - Tener un “tablero” rápido del avance general.
 
+## Capturas
+
+<p>
+  <img src="docs/screenshots/inicio.jpg" alt="Inicio: carreras agrupadas por universidad" width="32%" />
+  <img src="docs/screenshots/avance.jpg" alt="Avance de la carrera, promedio y materias habilitadas" width="32%" />
+  <img src="docs/screenshots/correlativas-rendir.jpg" alt="Correlativas para cursar y para rendir" width="32%" />
+</p>
+
 ## Stack / Tecnologías
 
 - **Next.js** (App Router)
